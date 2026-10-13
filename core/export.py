@@ -1,6 +1,6 @@
 # ============================================================
 # core/export.py - FBX export (Roblox official settings)
-# Protocol 4.2.0 | Source: create.roblox.com/docs/art/modeling/export-requirements
+# Protocol 4.2.0 | Blender 3.6
 # ============================================================
 import bpy
 import os
@@ -9,7 +9,7 @@ DEFAULT_OUT_DIR = "C:/Users/Public/RobloxExports"
 
 
 def export_fbx(objs, name, out_dir=DEFAULT_OUT_DIR):
-    """FBX export - Roblox official settings."""
+    """FBX export - Roblox official settings (Blender 3.6)."""
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, name + ".fbx")
     bpy.ops.object.select_all(action='DESELECT')
@@ -19,7 +19,7 @@ def export_fbx(objs, name, out_dir=DEFAULT_OUT_DIR):
     bpy.ops.export_scene.fbx(
         filepath=path,
         use_selection=True,
-        apply_scale_options='FBX_UNIT_SCALE',  # Official
+        apply_scale_options='FBX_SCALE_UNITS',  # Official for Blender 3.6
         axis_forward='-Z',
         axis_up='Y',
         path_mode='COPY',
