@@ -1,0 +1,36 @@
+# ============================================================
+# rbxgen — .gitignore
+# ============================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Blender
+*.blend1
+*.blend2
+*.blend3
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project
+reports/*.json
+!reports/.gitkeep
+assets_cache/
+.env
+!env.example
