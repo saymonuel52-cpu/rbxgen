@@ -1,0 +1,56 @@
+{
+  "name": "Fortress_Standard",
+  "level": "FULL",
+  "budget_tris": 20000,
+  "origin_mode": "CENTER",
+  "nodes": [
+    {
+      "fn": "tower",
+      "name": "Tower_NW",
+      "args": [10.0, 3.0, "hip", [-10, 0, 10]],
+      "material": "stone"
+    },
+    {
+      "fn": "tower",
+      "name": "Tower_NE",
+      "args": [10.0, 3.0, "hip", [10, 0, 10]],
+      "material": "stone"
+    },
+    {
+      "fn": "tower",
+      "name": "Tower_SW",
+      "args": [10.0, 3.0, "hip", [-10, 0, -10]],
+      "material": "stone"
+    },
+    {
+      "fn": "tower",
+      "name": "Tower_SE",
+      "args": [10.0, 3.0, "hip", [10, 0, -10]],
+      "material": "stone"
+    },
+    {
+      "fn": "wall",
+      "name": "Wall_N",
+      "args": [20.0, 8.0, 0.6, null, [0, 0, 10]],
+      "material": "stone"
+    },
+    {
+      "fn": "wall",
+      "name": "Wall_S",
+      "args": [20.0, 8.0, 0.6, null, [0, 0, -10]],
+      "material": "stone"
+    },
+    {
+      "fn": "wall",
+      "name": "Wall_E",
+      "args": [20.0, 8.0, 0.6, null, [10, 0, 0]],
+      "material": "stone"
+    },
+    {
+      "fn": "wall",
+      "name": "Wall_W",
+      "args": [20.0, 8.0, 0.6, null, [-10, 0, 0]],
+      "material": "stone"
+    }
+  ]
+}
