@@ -1,0 +1,14 @@
+{
+  "name": "Room_Standard",
+  "level": "EXTENDED",
+  "budget_tris": 5000,
+  "origin_mode": "CENTER",
+  "nodes": [
+    {
+      "fn": "room",
+      "name": "Room",
+      "args": [6.0, 6.0, 4.0, true, true, [0, 0, 0]],
+      "material": "wood_new"
+    }
+  ]
+}
