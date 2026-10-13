@@ -1,5 +1,5 @@
 # ============================================================
-# core/scene.py - Scene management
+# core/scene.py - Scene management (v2, join fixed)
 # Protocol 4.2.0
 # ============================================================
 import bpy
@@ -38,16 +38,43 @@ def apply_transform(ob, location=False, rotation=True, scale=True):
 
 
 def join_objects(objs, name, origin_mode='CENTER'):
-    """[160] join with explicit Origin setup."""
+    """[160] Join with explicit Origin setup. Fixed for headless mode."""
     if not objs:
         raise ValueError("[E] join_objects: empty list")
-    bpy.ops.object.select_all(action='DESELECT')
-    for o in objs:
-        o.select_set(True)
-    bpy.context.view_layer.objects.active = objs[0]
-    bpy.ops.object.join()
-    joined = bpy.context.view_layer.objects.active
-    joined.name = name
+
+    if len(objs) == 1:
+        joined = objs[0]
+        joined.name = name
+    else:
+        # Ensure all objects are in current view layer
+        view_layer = bpy.context.view_layer
+        for o in objs:
+            if o.name not in view_layer.objects:
+                try:
+                    view_layer.active_layer_collection.collection.objects.link(o)
+                except Exception:
+                    pass
+
+        bpy.ops.object.select_all(action='DESELECT')
+        for o in objs:
+            o.select_set(True)
+        view_layer.objects.active = objs[0]
+
+        # Use temp_override to ensure join context
+        try:
+            with bpy.context.temp_override(
+                active_object=objs[0],
+                selected_objects=objs,
+                selected_editable_objects=objs
+            ):
+                bpy.ops.object.join()
+        except Exception:
+            bpy.ops.object.join()
+
+        joined = bpy.context.view_layer.objects.active
+        joined.name = name
+
+    # Set Origin
     if origin_mode == 'CENTER':
         bpy.context.scene.cursor.location = (0, 0, 0)
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
@@ -57,6 +84,7 @@ def join_objects(objs, name, origin_mode='CENTER'):
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
     elif origin_mode == 'CURSOR':
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+
     return joined
 
 
