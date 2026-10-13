@@ -2,13 +2,8 @@
   "name": "House_Country",
   "level": "FULL",
   "budget_tris": 20000,
-  "origin_mode": "CENTER",
+  "origin_mode": "GEOMETRY",
   "nodes": [
-    {
-      "fn": "house_section",
-      "name": "House",
-      "args": [8.0, 6.0, 4.0, "gable", [0, 0, 0]],
-      "material": "wood_old"
-    }
+    {"fn": "house_section", "name": "House", "args": [8.0, 6.0, 4.0, "gable", [0, 0, 0]], "material": "wood_old"}
   ]
 }
