@@ -1,0 +1,24 @@
+{
+  "name": "Tree_Standard",
+  "level": "BASE",
+  "budget_tris": 800,
+  "actual_tris": 316,
+  "origin_mode": "CENTER",
+  "patterns_used": [
+    "nature"
+  ],
+  "joints": [],
+  "validator": {
+    "status": "OK",
+    "errors": [],
+    "warns": [
+      [
+        "W001",
+        "N-gons: 2"
+      ]
+    ]
+  },
+  "fbx_path": "C:/Users/Public/RobloxExports\\Tree_Standard.fbx",
+  "timestamp": "2026-10-13T20:05:51.684524",
+  "protocol": "4.2.0"
+}

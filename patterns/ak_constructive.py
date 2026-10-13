@@ -1,5 +1,5 @@
-# ============================================================
-# patterns/ak_constructive.py — КОНСТРУКТИВНЫЕ (236–250)
+﻿# ============================================================
+# patterns/ak_constructive.py - CONSTRUCTIVE (236-250)
 # Protocol 4.2.0
 # ============================================================
 import bpy
@@ -9,40 +9,41 @@ from patterns.aj_atomic import block, plate, beam, column, rod
 
 
 def wall(name, W, H, T, openings=None, pos=(0, 0, 0)):
-    """[236] Стена: плита + обрамление."""
-    parts = [plate(f"{name}_Plate", (W, T, H),
+    """[236] Wall: plate + rim."""
+    parts = [plate(name + "_Plate", (W, T, H),
                    (pos[0], pos[1], pos[2] + H/2))]
     rim = T * 1.5
     parts += [
-        block(f"{name}_Bot", (W + rim, rim, rim),
+        block(name + "_Bot", (W + rim, rim, rim),
               (pos[0], pos[1], pos[2] + rim/2)),
-        block(f"{name}_Top", (W + rim, rim, rim),
+        block(name + "_Top", (W + rim, rim, rim),
               (pos[0], pos[1], pos[2] + H - rim/2)),
-        block(f"{name}_L", (rim, rim, H),
+        block(name + "_L", (rim, rim, H),
               (pos[0] - W/2 - rim/2, pos[1], pos[2] + H/2)),
-        block(f"{name}_R", (rim, rim, H),
+        block(name + "_R", (rim, rim, H),
               (pos[0] + W/2 + rim/2, pos[1], pos[2] + H/2)),
     ]
     return join_objects(parts, name, origin_mode='CENTER')
 
 
 def floor(name, W, D, T=0.15, n_beams=4, pos=(0, 0, 0)):
-    """[237] Пол: плита + балки снизу."""
-    parts = [plate(f"{name}_Plate", (W, D, T), pos)]
+    """[237] Floor."""
+    parts = [plate(name + "_Plate", (W, D, T), pos)]
     for i in range(n_beams):
         x = (i - (n_beams - 1) / 2) * (W / n_beams)
-        parts.append(beam(f"{name}_Beam{i}", (0.15, 0.2, D - 0.4),
+        parts.append(beam(name + "_Beam" + str(i),
+                          (0.15, 0.2, D - 0.4),
                           (pos[0] + x, pos[1], pos[2] - T/2 - 0.1)))
     return join_objects(parts, name, origin_mode='CENTER')
 
 
 def ceiling(name, W, D, T=0.12, pos=(0, 0, 0)):
-    """[238] Потолок."""
+    """[238] Ceiling."""
     return plate(name, (W, D, T), pos)
 
 
 def roof_gable(name, W, H, D=1.0, angle_deg=35, pos=(0, 0, 0)):
-    """[239] Двускатная крыша."""
+    """[239] Gable roof."""
     parts = []
     half = W / 2
     slope_len = math.sqrt(half**2 + H**2)
@@ -56,13 +57,13 @@ def roof_gable(name, W, H, D=1.0, angle_deg=35, pos=(0, 0, 0)):
                             math.radians(sign * angle_deg))
         apply_transform(r)
         parts.append(r)
-    parts.append(block(f"{name}_Ridge", (0.2, D, 0.2),
+    parts.append(block(name + "_Ridge", (0.2, D, 0.2),
                        (pos[0], pos[1], pos[2] + H)))
     return join_objects(parts, name, origin_mode='GEOMETRY')
 
 
 def roof_hip(name, W, D, H, pos=(0, 0, 0)):
-    """[240] Шатровая крыша."""
+    """[240] Hip roof."""
     bpy.ops.mesh.primitive_cone_add(
         vertices=4, radius1=max(W, D)/2, radius2=0, depth=H,
         location=(pos[0], pos[1], pos[2] + H/2),
@@ -76,32 +77,34 @@ def roof_hip(name, W, D, H, pos=(0, 0, 0)):
 
 
 def arch(name, span, height, n_segments=8, thick=0.2, pos=(0, 0, 0)):
-    """[241] Арка из N сегментов."""
+    """[241] Arch."""
     R = span / (2 * math.sin(math.pi / n_segments))
     parts = []
     for i in range(n_segments):
         angle = i * math.pi / n_segments
         cx = R * math.cos(angle)
         cz = R * math.sin(angle) - R + height
-        parts.append(block(f"{name}_S{i}", (thick*1.5, thick*1.5, thick),
+        parts.append(block(name + "_S" + str(i),
+                           (thick*1.5, thick*1.5, thick),
                            (pos[0] + cx, pos[1], pos[2] + cz)))
-    parts.append(block(f"{name}_Key",
+    parts.append(block(name + "_Key",
                        (thick*1.8, thick*1.8, thick*1.2),
                        (pos[0], pos[1], pos[2] + height)))
     return join_objects(parts, name, origin_mode='CENTER')
 
 
 def truss(name, length, height, n_panels=6, pos=(0, 0, 0)):
-    """[242] Ферма."""
+    """[242] Truss."""
     parts = []
     panel_len = length / n_panels
-    parts.append(beam(f"{name}_Top", (0.15, 0.15, length),
+    parts.append(beam(name + "_Top", (0.15, 0.15, length),
                       (pos[0], pos[1], pos[2] + height/2)))
-    parts.append(beam(f"{name}_Bot", (0.15, 0.15, length),
+    parts.append(beam(name + "_Bot", (0.15, 0.15, length),
                       (pos[0], pos[1], pos[2] - height/2)))
     for i in range(n_panels + 1):
         x = (i - n_panels/2) * panel_len
-        parts.append(block(f"{name}_Post{i}", (0.1, 0.1, height),
+        parts.append(block(name + "_Post" + str(i),
+                           (0.1, 0.1, height),
                            (pos[0] + x, pos[1], pos[2])))
     for i in range(n_panels):
         x1 = (i - n_panels/2) * panel_len
@@ -119,75 +122,78 @@ def truss(name, length, height, n_panels=6, pos=(0, 0, 0)):
 
 
 def stairs(name, n_steps, step_w, step_d, step_h, pos=(0, 0, 0)):
-    """[244] Лестница."""
+    """[244] Stairs."""
     parts = []
     for i in range(n_steps):
-        parts.append(block(f"{name}_S{i}", (step_w, step_d, step_h),
+        parts.append(block(name + "_S" + str(i),
+                           (step_w, step_d, step_h),
                            (pos[0], pos[1] + step_d * (i + 0.5),
                             pos[2] + step_h * (i + 0.5))))
     return join_objects(parts, name, origin_mode='CENTER')
 
 
 def colonnade(name, n_cols, spacing, h, d=0.5, pos=(0, 0, 0)):
-    """[243] Колоннада + архитрав."""
+    """[243] Colonnade + architrave."""
     parts = []
     for i in range(n_cols):
         x = (i - (n_cols - 1) / 2) * spacing
-        parts.append(column(f"{name}_C{i}", h, d, 8,
+        parts.append(column(name + "_C" + str(i), h, d, 8,
                             (pos[0] + x, pos[1], pos[2])))
     total_w = (n_cols - 1) * spacing + d
-    parts.append(beam(f"{name}_Arch", (0.3, 0.3, total_w),
+    parts.append(beam(name + "_Arch", (0.3, 0.3, total_w),
                       (pos[0], pos[1], pos[2] + h + 0.15)))
     return join_objects(parts, name, origin_mode='CENTER')
 
 
 def opening(name, W, H, T, pos=(0, 0, 0)):
-    """[245] Проём — обрамление."""
+    """[245] Opening - frame."""
     rim = 0.15
     parts = [
-        block(f"{name}_T", (W + rim*2, T, rim),
+        block(name + "_T", (W + rim*2, T, rim),
               (pos[0], pos[1], pos[2] + H/2)),
-        block(f"{name}_B", (W + rim*2, T, rim),
+        block(name + "_B", (W + rim*2, T, rim),
               (pos[0], pos[1], pos[2] - H/2)),
-        block(f"{name}_L", (rim, T, H),
+        block(name + "_L", (rim, T, H),
               (pos[0] - W/2, pos[1], pos[2])),
-        block(f"{name}_R", (rim, T, H),
+        block(name + "_R", (rim, T, H),
               (pos[0] + W/2, pos[1], pos[2])),
     ]
     return join_objects(parts, name, origin_mode='CENTER')
 
 
 def frame(name, W, H, T, pos=(0, 0, 0)):
-    """[246] Рама."""
+    """[246] Frame."""
     return opening(name, W, H, T, pos)
 
 
 def base(name, W, D, H=0.3, pos=(0, 0, 0)):
-    """[248] Опора / база."""
+    """[248] Base."""
     parts = [
-        plate(f"{name}_Plate", (W, D, H), (pos[0], pos[1], pos[2] + H/2)),
-        block(f"{name}_Rim", (W + 0.2, D + 0.2, H * 0.3),
+        plate(name + "_Plate", (W, D, H),
+              (pos[0], pos[1], pos[2] + H/2)),
+        block(name + "_Rim", (W + 0.2, D + 0.2, H * 0.3),
               (pos[0], pos[1], pos[2] + H * 0.85)),
     ]
     return join_objects(parts, name, origin_mode='CENTER')
 
 
 def cornice(name, W, T=0.3, D=0.4, pos=(0, 0, 0)):
-    """[249] Карниз."""
+    """[249] Cornice."""
     parts = [
-        block(f"{name}_Main", (W, D, T), pos),
-        block(f"{name}_Drip", (W, 0.1, T * 0.6),
+        block(name + "_Main", (W, D, T), pos),
+        block(name + "_Drip", (W, 0.1, T * 0.6),
               (pos[0], pos[1] + D/2, pos[2] - T * 0.5)),
     ]
     return join_objects(parts, name, origin_mode='CENTER')
 
 
 def parapet(name, W, H, T, n_blocks, pos=(0, 0, 0)):
-    """[250] Парапет из блоков."""
+    """[250] Parapet."""
     parts = []
     spacing = W / n_blocks
     for i in range(n_blocks):
         x = -W/2 + (i + 0.5) * spacing
-        parts.append(block(f"{name}_B{i}", (spacing * 0.85, T, H),
+        parts.append(block(name + "_B" + str(i),
+                           (spacing * 0.85, T, H),
                            (pos[0] + x, pos[1], pos[2] + H/2)))
     return join_objects(parts, name, origin_mode='CENTER')

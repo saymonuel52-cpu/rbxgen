@@ -1,0 +1,37 @@
+{
+  "name": "Door_Standard",
+  "level": "EXTENDED",
+  "budget_tris": 5000,
+  "actual_tris": 80,
+  "origin_mode": "CURSOR",
+  "patterns_used": [
+    "frame",
+    "block",
+    "column"
+  ],
+  "joints": [
+    {
+      "name": "DoorHinge",
+      "type": "Hinge",
+      "part0": "Door_Panel",
+      "part1": "Door_Frame"
+    }
+  ],
+  "validator": {
+    "status": "OK",
+    "errors": [],
+    "warns": [
+      [
+        "W001",
+        "N-gons: 2"
+      ],
+      [
+        "W004",
+        "Materials > 1: 2"
+      ]
+    ]
+  },
+  "fbx_path": "C:/Users/Public/RobloxExports\\Door_Standard.fbx",
+  "timestamp": "2026-10-13T20:07:17.284223",
+  "protocol": "4.2.0"
+}

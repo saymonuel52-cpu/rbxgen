@@ -1,0 +1,31 @@
+{
+  "name": "Fortress_Standard",
+  "level": "FULL",
+  "budget_tris": 20000,
+  "actual_tris": 504,
+  "origin_mode": "CENTER",
+  "patterns_used": [
+    "tower",
+    "tower",
+    "tower",
+    "tower",
+    "wall",
+    "wall",
+    "wall",
+    "wall"
+  ],
+  "joints": [],
+  "validator": {
+    "status": "OK",
+    "errors": [],
+    "warns": [
+      [
+        "W001",
+        "N-gons: 8"
+      ]
+    ]
+  },
+  "fbx_path": "C:/Users/Public/RobloxExports\\Fortress_Standard.fbx",
+  "timestamp": "2026-10-13T20:05:50.293300",
+  "protocol": "4.2.0"
+}
