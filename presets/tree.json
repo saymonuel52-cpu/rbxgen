@@ -1,0 +1,14 @@
+{
+  "name": "Tree_Standard",
+  "level": "BASE",
+  "budget_tris": 800,
+  "origin_mode": "CENTER",
+  "nodes": [
+    {
+      "fn": "nature",
+      "name": "Tree",
+      "args": [6.0, 4, 3, [0, 0, 0]],
+      "material": "wood_old"
+    }
+  ]
+}
