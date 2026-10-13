@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # core/scene.py — Scene management
 # Protocol 4.2.0
 # ============================================================
@@ -20,7 +20,6 @@ def setup_units():
     """[214] Unit System = None, Rotation = Degrees."""
     scene = bpy.context.scene
     scene.unit_settings.system = 'NONE'
-    scene.unit_settings.rotation_unit = 'DEGREES'
     scene.unit_settings.scale_length = 0.01
 
 
@@ -91,3 +90,4 @@ def add_uv_smart(ob, angle_deg=66.0, margin=0.02):
     bpy.ops.uv.smart_project(
         angle_limit=math.radians(angle_deg), island_margin=margin)
     bpy.ops.object.mode_set(mode='OBJECT')
+
