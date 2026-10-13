@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 # patterns/aj_atomic.py - ATOMIC PRIMITIVES (226-235)
 # Protocol 4.2.0
 # ============================================================
@@ -27,7 +27,7 @@ def beam(name, size, pos=(0, 0, 0)):
 
 
 def column(name, h, d, v=8, pos=(0, 0, 0)):
-    """[229] Column. v=8 -> 32 tris, v=16 -> 64 tris."""
+    """[229] Column. v=8 -> 32 tris."""
     bpy.ops.mesh.primitive_cylinder_add(
         vertices=v, radius=d/2, depth=h,
         location=(pos[0], pos[1], pos[2] + h/2))

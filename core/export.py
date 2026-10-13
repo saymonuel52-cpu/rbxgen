@@ -1,5 +1,6 @@
-﻿# ============================================================
+# ============================================================
 # core/export.py - FBX export (Blender 3.6 minimal)
+# Protocol 4.2.0
 # ============================================================
 import bpy
 import os
@@ -26,5 +27,5 @@ def export_fbx(objs, name, out_dir=DEFAULT_OUT_DIR):
         embed_textures=True,
         mesh_smooth_type='FACE',
     )
-    print(f"[EXPORT] {path}")
+    print("[EXPORT] " + path)
     return path

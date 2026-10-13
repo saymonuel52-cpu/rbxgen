@@ -1,5 +1,5 @@
-﻿# ============================================================
-# core/scene.py — Scene management
+# ============================================================
+# core/scene.py - Scene management
 # Protocol 4.2.0
 # ============================================================
 import bpy
@@ -7,7 +7,7 @@ import math
 
 
 def clear_scene():
-    """Полная очистка сцены."""
+    """Full scene cleanup."""
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete(use_global=False)
     for block in (bpy.data.meshes, bpy.data.materials, bpy.data.images):
@@ -17,38 +17,30 @@ def clear_scene():
 
 
 def setup_units():
-    """[214] Unit System = None, Rotation = Degrees."""
+    """[214] Unit System = None."""
     scene = bpy.context.scene
     scene.unit_settings.system = 'NONE'
     scene.unit_settings.scale_length = 0.01
 
 
 def select_only(ob):
-    """Выделить только указанный объект."""
+    """Select only specified object."""
     bpy.ops.object.select_all(action='DESELECT')
     ob.select_set(True)
     bpy.context.view_layer.objects.active = ob
 
 
 def apply_transform(ob, location=False, rotation=True, scale=True):
-    """[1] bake transform перед join."""
+    """[1] bake transform before join."""
     select_only(ob)
     bpy.ops.object.transform_apply(
         location=location, rotation=rotation, scale=scale)
 
 
 def join_objects(objs, name, origin_mode='CENTER'):
-    """[160] join с явной установкой Origin.
-    
-    origin_mode:
-      CENTER   — Origin в (0, 0, 0) на земле (статика)
-      GEOMETRY — Origin в bbox center (симметричные)
-      MEDIAN   — Origin в медиану вершин
-      CURSOR   — Origin в текущем курсоре (для подвижных)
-      NONE     — не трогать
-    """
+    """[160] join with explicit Origin setup."""
     if not objs:
-        raise ValueError("[E] join_objects: пустой список")
+        raise ValueError("[E] join_objects: empty list")
     bpy.ops.object.select_all(action='DESELECT')
     for o in objs:
         o.select_set(True)
@@ -69,7 +61,7 @@ def join_objects(objs, name, origin_mode='CENTER'):
 
 
 def count_tris(ob):
-    """[151] Подсчёт tris через triangles."""
+    """[151] count tris."""
     tris = 0
     for poly in ob.data.polygons:
         n = len(poly.vertices)
@@ -90,4 +82,3 @@ def add_uv_smart(ob, angle_deg=66.0, margin=0.02):
     bpy.ops.uv.smart_project(
         angle_limit=math.radians(angle_deg), island_margin=margin)
     bpy.ops.object.mode_set(mode='OBJECT')
-
