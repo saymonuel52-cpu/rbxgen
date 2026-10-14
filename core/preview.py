@@ -37,7 +37,7 @@ def _get_scene_bbox():
     return min_v, max_v
 
 
-def _setup_render(width=800, height=600):
+def _setup_render(width=1200, height=900):
     """Setup render settings."""
     scene = bpy.context.scene
     scene.render.resolution_x = width
@@ -80,7 +80,7 @@ def render_view(name, cam_loc, target, filepath):
     bpy.data.objects.remove(cam, do_unlink=True)
 
 
-def _create_ground_plane(size=200, z=0.0):
+def _create_ground_plane(size=100, z=0.0):
     """Temp ground plane for preview (removed after)."""
     bpy.ops.mesh.primitive_plane_add(size=size, location=(0, 0, z))
     plane = bpy.context.object
@@ -107,17 +107,19 @@ def render_preview(map_name, views=None):
     out_dir = _ensure_reports()
     _setup_render()
 
-    # Add ground plane for context
-    ground = _create_ground_plane(size=200, z=0.0)
-
-    # Get scene bbox
+    # Get scene bbox first
     min_v, max_v = _get_scene_bbox()
+    size = (max_v - min_v).length
+    ground_size = max(size * 1.5, 20)
+
+    # Add ground plane for context
+    ground = _create_ground_plane(size=ground_size, z=0.0)
     center = (min_v + max_v) / 2.0
     size = (max_v - min_v).length
     if size < 5:
         size = 20
 
-    cam_dist = size * 1.5
+    cam_dist = size * 0.9
 
     print("[PREVIEW] bbox: min={}, max={}, size={:.1f}".format(
         tuple(round(v, 1) for v in min_v),
