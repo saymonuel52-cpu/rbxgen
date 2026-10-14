@@ -1,5 +1,5 @@
 # ============================================================
-# core/importer.py - Import with proper group handling
+# core/importer.py - Import with JOIN into single object
 # Protocol 4.2.0
 # ============================================================
 import bpy
@@ -9,35 +9,20 @@ from mathutils import Vector
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "assets_cache")
 
 
-def _get_all_objects():
-    """Snapshot of all objects currently in scene."""
+def _all_object_names():
     return set(bpy.data.objects.keys())
-
-
-def import_obj(filepath):
-    if not os.path.exists(filepath):
-        return []
-    if hasattr(bpy.ops.wm, "obj_import"):
-        bpy.ops.wm.obj_import(filepath=filepath)
-    else:
-        bpy.ops.import_scene.obj(filepath=filepath)
-    return list(bpy.context.selected_objects)
-
-
-def import_gltf(filepath):
-    if not os.path.exists(filepath):
-        return []
-    bpy.ops.import_scene.gltf(filepath=filepath)
-    return list(bpy.context.selected_objects)
 
 
 def import_model(filepath):
     ext = os.path.splitext(filepath)[1].lower()
-    if ext in (".gltf", ".glb"):
-        return import_gltf(filepath)
-    elif ext == ".obj":
-        return import_obj(filepath)
-    return []
+    if ext == ".obj":
+        if hasattr(bpy.ops.wm, "obj_import"):
+            bpy.ops.wm.obj_import(filepath=filepath)
+        else:
+            bpy.ops.import_scene.obj(filepath=filepath)
+    elif ext in (".gltf", ".glb"):
+        bpy.ops.import_scene.gltf(filepath=filepath)
+    return True
 
 
 def get_model_path(kit_name, model_name, prefer_format="OBJ"):
@@ -85,72 +70,65 @@ def list_models(kit_name, format_filter="OBJ"):
     return sorted(models)
 
 
-def snap_to_ground(obj):
-    """Move object so its lowest point is at Z=0 (local)."""
-    if not obj or obj.type != 'MESH':
-        return
-    bpy.context.view_layer.update()
-    bbox_world = [obj.matrix_world @ Vector(c) for c in obj.bound_box]
-    min_z = min(v.z for v in bbox_world)
-    if abs(min_z) > 0.001:
-        obj.location.z -= min_z
-
-
 def import_into_scene(kit_name, model_name, pos=(0, 0, 0), scale=1.0,
                       prefer_format="OBJ", snap=True):
-    """Import model, snap to ground, move to pos. Returns the imported object."""
+    """Import model -> join all new meshes -> snap -> move. Returns single obj."""
     filepath = get_model_path(kit_name, model_name, prefer_format)
     if not filepath:
         print("[ERROR] Model not found: {}".format(model_name))
         return None
 
-    # Snapshot scene before import
-    before = _get_all_objects()
+    # 1. Snapshot scene BEFORE
+    before = _all_object_names()
 
-    # Import
+    # 2. Import
     import_model(filepath)
+    bpy.context.view_layer.update()
 
-    # Find new objects
-    after = _get_all_objects()
+    # 3. Find NEW objects
+    after = _all_object_names()
     new_names = after - before
-    new_objs = [bpy.data.objects[n] for n in new_names if n in bpy.data.objects]
+    new_objs = [bpy.data.objects[n] for n in new_names
+                if n in bpy.data.objects and bpy.data.objects[n].type == 'MESH']
 
     if not new_objs:
-        print("[ERROR] No new objects after import: {}".format(filepath))
+        print("[ERROR] No new meshes: {}".format(filepath))
         return None
 
-    # Find root mesh (first MESH object)
-    root = None
-    meshes = [o for o in new_objs if o.type == 'MESH']
-    if meshes:
-        root = meshes[0]
-    else:
-        root = new_objs[0]
+    print("[IMPORT] {} -> {} mesh(es)".format(model_name, len(new_objs)))
 
-    # Scale
+    # 4. Select new meshes + join
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in new_objs:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = new_objs[0]
+    if len(new_objs) > 1:
+        bpy.ops.object.join()
+
+    root = bpy.context.view_layer.objects.active
+    root.name = model_name
+
+    # 5. Apply scale
     if scale != 1.0:
         root.scale = (scale, scale, scale)
-        bpy.context.view_layer.update()
+        bpy.ops.object.transform_apply(
+            location=False, rotation=False, scale=True)
 
-    # Snap to ground
+    # 6. Snap to ground
     if snap:
-        snap_to_ground(root)
+        bpy.context.view_layer.update()
+        bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
+        min_z = min(v.z for v in bbox_world)
+        if abs(min_z) > 0.001:
+            root.location.z -= min_z
 
-    # Move to pos
-    root.location.x += pos[0]
-    root.location.y += pos[1]
-    root.location.z += pos[2]
+    # 7. Apply all transforms (freeze)
+    bpy.ops.object.transform_apply(
+        location=False, rotation=False, scale=True)
 
-    # Clean up other objects (join children into root if any)
-    for o in new_objs:
-        if o != root and o.type == 'MESH':
-            try:
-                bpy.ops.object.select_all(action='DESELECT')
-                o.select_set(True)
-                root.select_set(True)
-                bpy.context.view_layer.objects.active = root
-                bpy.ops.object.join()
-            except Exception:
-                pass
+    # 8. Move to pos
+    root.location.x = pos[0]
+    root.location.y = pos[1]
+    root.location.z = pos[2]
 
     return root
