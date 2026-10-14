@@ -1,6 +1,6 @@
 # ============================================================
-# patterns/ak_detail.py - DETAILS (10 patterns)
-# Protocol 4.2.0 | Windows, doors, roofs details
+# patterns/ak_detail.py - DETAILS
+# Protocol 4.2.0 | roof_tiles optimized
 # ============================================================
 import bpy
 import math
@@ -10,11 +10,11 @@ from patterns.ak_constructive import wall, floor, ceiling
 
 
 # ============================================================
-# WINDOWS (5 patterns)
+# WINDOWS
 # ============================================================
 
 def window_frame(name, W, H, T=0.15, pos=(0, 0, 0)):
-    """Window frame - 4 beams forming rectangle."""
+    """Window frame."""
     rim = T * 0.8
     parts = [
         beam(name + "_Top", (W + rim*2, rim, rim),
@@ -26,7 +26,6 @@ def window_frame(name, W, H, T=0.15, pos=(0, 0, 0)):
         beam(name + "_R", (rim, rim, H),
              (pos[0] + W/2, pos[1], pos[2])),
     ]
-    # Cross mullion (vertical + horizontal)
     parts.append(beam(name + "_V", (rim*0.7, rim*0.7, H),
                       (pos[0], pos[1], pos[2])))
     parts.append(beam(name + "_H", (W, rim*0.7, rim*0.7),
@@ -35,17 +34,17 @@ def window_frame(name, W, H, T=0.15, pos=(0, 0, 0)):
 
 
 def window_glass(name, W, H, pos=(0, 0, 0)):
-    """Window glass - thin transparent plate."""
-    return block(name, (W, 0.03, H), pos)
+    """Window glass - no bevel."""
+    return block(name, (W, 0.03, H), pos, bevel_width=0.0)
 
 
 def window_sill(name, W, D=0.3, pos=(0, 0, 0)):
-    """Window sill (bottom ledge)."""
+    """Window sill."""
     return block(name, (W + 0.3, D, 0.1), pos)
 
 
 def window_lintel(name, W, D=0.3, pos=(0, 0, 0)):
-    """Window lintel (top decoration)."""
+    """Window lintel."""
     parts = [
         block(name + "_Main", (W + 0.4, D, 0.15), pos),
         block(name + "_Drip", (W + 0.5, D + 0.1, 0.08),
@@ -55,7 +54,7 @@ def window_lintel(name, W, D=0.3, pos=(0, 0, 0)):
 
 
 def window_full(name, W, H, T=0.15, pos=(0, 0, 0)):
-    """Full window: frame + glass + sill + lintel."""
+    """Full window."""
     parts = []
     parts.append(window_frame(name + "_Frame", W, H, T, pos))
     parts.append(window_glass(name + "_Glass", W * 0.85, H * 0.85, pos))
@@ -67,11 +66,11 @@ def window_full(name, W, H, T=0.15, pos=(0, 0, 0)):
 
 
 # ============================================================
-# DOORS (3 patterns)
+# DOORS
 # ============================================================
 
 def door_frame(name, W, H, T=0.2, pos=(0, 0, 0)):
-    """Door frame - 3 beams (top + 2 sides)."""
+    """Door frame."""
     rim = T * 0.9
     parts = [
         beam(name + "_Top", (W + rim*2, T, rim),
@@ -85,9 +84,8 @@ def door_frame(name, W, H, T=0.2, pos=(0, 0, 0)):
 
 
 def door_panel(name, W, H, T=0.1, pos=(0, 0, 0)):
-    """Door panel with inset panels (filyonki)."""
+    """Door panel with insets."""
     parts = [block(name + "_Main", (W, T, H), pos)]
-    # 2 vertical insets
     for sign in (-1, 1):
         parts.append(block(name + "_Inset" + str(sign),
                            (W * 0.7, T * 0.5, H * 0.35),
@@ -97,7 +95,7 @@ def door_panel(name, W, H, T=0.1, pos=(0, 0, 0)):
 
 
 def door_handle(name, W, pos=(0, 0, 0)):
-    """Door handle - knob + plate."""
+    """Door handle."""
     x = W/2 - 0.3
     parts = [
         block(name + "_Plate", (0.15, 0.05, 0.25),
@@ -109,7 +107,7 @@ def door_handle(name, W, pos=(0, 0, 0)):
 
 
 # ============================================================
-# ROOF DETAILS (2 patterns)
+# ROOF DETAILS
 # ============================================================
 
 def chimney(name, W=1.0, D=1.0, H=3.0, pos=(0, 0, 0)):
@@ -123,8 +121,8 @@ def chimney(name, W=1.0, D=1.0, H=3.0, pos=(0, 0, 0)):
     return join_objects(parts, name, origin_mode='GEOMETRY')
 
 
-def roof_tiles(name, W, D, angle_deg=35, n_rows=4, n_cols=6, pos=(0, 0, 0)):
-    """Roof tiles - array of small plates along slope."""
+def roof_tiles(name, W, D, angle_deg=35, n_rows=3, n_cols=4, pos=(0, 0, 0)):
+    """Roof tiles - NO bevel, fewer tiles (3x4 per side = 24 total)."""
     parts = []
     half = W / 2
     slope_len = half / math.cos(math.radians(angle_deg))
@@ -139,8 +137,10 @@ def roof_tiles(name, W, D, angle_deg=35, n_rows=4, n_cols=6, pos=(0, 0, 0)):
             z = u * math.sin(math.radians(angle_deg))
             for j in range(n_rows):
                 y = -D/2 + (j + 0.5) * tile_d
+                # NO BEVEL for tiles (bevel_width=0)
                 parts.append(block(
                     name + "_T" + str(sign) + "_" + str(i) + "_" + str(j),
                     (tile_w * 0.9, tile_d * 0.9, tile_t),
-                    (pos[0] + x, pos[1] + y, pos[2] + z)))
+                    (pos[0] + x, pos[1] + y, pos[2] + z),
+                    bevel_width=0.0))
     return join_objects(parts, name, origin_mode='GEOMETRY')

@@ -1,48 +1,49 @@
 # ============================================================
-# patterns/aj_atomic.py - ATOMIC PRIMITIVES (226-235)
+# patterns/aj_atomic.py - ATOMIC PRIMITIVES
 # Protocol 4.2.0
 # ============================================================
 import bpy
 from core.scene import apply_transform, join_objects
 
 
-def block(name, size, pos=(0, 0, 0)):
+def block(name, size, pos=(0, 0, 0), bevel_width=0.02):
     """[226] Cube. size=(W, H, D). tris = 12."""
     bpy.ops.mesh.primitive_cube_add(size=1.0, location=pos)
     ob = bpy.context.object
     ob.scale = size
-    apply_transform(ob)
+    apply_transform(ob, bevel=(bevel_width > 0), bevel_width=bevel_width)
     ob.name = name
     return ob
 
 
 def plate(name, size, pos=(0, 0, 0)):
-    """[227] Plate. size=(W, D, T). tris = 12."""
+    """[227] Plate."""
     return block(name, size, pos)
 
 
 def beam(name, size, pos=(0, 0, 0)):
-    """[228] Beam. size=(W, D, L). tris = 12."""
+    """[228] Beam."""
     return block(name, size, pos)
 
 
-def column(name, h, d, v=8, pos=(0, 0, 0)):
-    """[229] Column. v=8 -> 32 tris."""
+def column(name, h, d, v=8, pos=(0, 0, 0), bevel_width=0.02):
+    """[229] Column."""
     bpy.ops.mesh.primitive_cylinder_add(
         vertices=v, radius=d/2, depth=h,
         location=(pos[0], pos[1], pos[2] + h/2))
     ob = bpy.context.object
+    apply_transform(ob, bevel=(bevel_width > 0), bevel_width=bevel_width)
     ob.name = name
     return ob
 
 
-def rod(name, h, d, v=8, pos=(0, 0, 0)):
+def rod(name, h, d, v=8, pos=(0, 0, 0), bevel_width=0.01):
     """[230] Rod."""
-    return column(name, h, d, v, pos)
+    return column(name, h, d, v, pos, bevel_width)
 
 
 def ring(name, R, r, maj=12, min_=4, pos=(0, 0, 0)):
-    """[231] Torus. tris = maj * min * 2."""
+    """[231] Torus."""
     bpy.ops.mesh.primitive_torus_add(
         major_radius=R, minor_radius=r,
         major_segments=maj, minor_segments=min_,
@@ -52,21 +53,23 @@ def ring(name, R, r, maj=12, min_=4, pos=(0, 0, 0)):
     return ob
 
 
-def sphere(name, r, seg=8, ring_count=6, pos=(0, 0, 0)):
-    """[232] UV sphere."""
+def sphere(name, r, seg=8, ring_count=6, pos=(0, 0, 0), bevel_width=0.0):
+    """[232] UV sphere (no bevel)."""
     bpy.ops.mesh.primitive_uv_sphere_add(
         segments=seg, ring_count=ring_count, radius=r, location=pos)
     ob = bpy.context.object
+    apply_transform(ob, bevel=False)
     ob.name = name
     return ob
 
 
-def cone(name, r, h, v=16, pos=(0, 0, 0)):
-    """[233] Cone. tris = v * 3."""
+def cone(name, r, h, v=16, pos=(0, 0, 0), bevel_width=0.02):
+    """[233] Cone."""
     bpy.ops.mesh.primitive_cone_add(
         vertices=v, radius1=r, radius2=0, depth=h,
         location=(pos[0], pos[1], pos[2] + h/2))
     ob = bpy.context.object
+    apply_transform(ob, bevel=(bevel_width > 0), bevel_width=bevel_width)
     ob.name = name
     return ob
 
