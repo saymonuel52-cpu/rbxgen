@@ -4,6 +4,43 @@
   "budget_tris": 20000,
   "origin_mode": "GEOMETRY",
   "nodes": [
-    {"fn": "house_section", "name": "House", "args": [8.0, 6.0, 4.0, "gable", [0, 0, 0]], "material": "wood_old"}
+    { "fn": "block", "name": "House_Base",
+      "args": [[9.0, 7.0, 0.3], [0, 0, 0.15]], "material": "stone" },
+
+    { "fn": "wall", "name": "W_S",
+      "args": [8.0, 4.0, 0.2, null, [0, -3.0, 0.3], 0], "material": "wood_old" },
+    { "fn": "wall", "name": "W_N",
+      "args": [8.0, 4.0, 0.2, null, [0, 3.0, 0.3], 0], "material": "wood_old" },
+    { "fn": "wall", "name": "W_W",
+      "args": [6.0, 4.0, 0.2, null, [-4.0, 0, 0.3], 90], "material": "wood_old" },
+    { "fn": "wall", "name": "W_E",
+      "args": [6.0, 4.0, 0.2, null, [4.0, 0, 0.3], 90], "material": "wood_old" },
+
+    { "fn": "floor", "name": "Floor",
+      "args": [8.0, 6.0, 0.15, 0, [0, 0, 0.3]], "material": "wood_new" },
+    { "fn": "ceiling", "name": "Ceiling",
+      "args": [8.0, 6.0, 0.12, [0, 0, 4.3]], "material": "wood_new" },
+
+    { "fn": "roof_gable", "name": "Roof",
+      "args": [8.8, 2.0, 6.8, 35, [0, 0, 4.3]], "material": "straw" },
+    { "fn": "roof_tiles", "name": "RoofTiles",
+      "args": [8.8, 6.8, 35, 4, 6, [0, 0, 4.3]], "material": "stone" },
+
+    { "fn": "chimney", "name": "Chimney",
+      "args": [0.8, 0.8, 3.5, [2.0, 0, 4.3]], "material": "stone" },
+
+    { "fn": "door_panel", "name": "Door_Panel",
+      "args": [2.4, 3.4, 0.1, [0, -3.0, 2.0]], "material": "wood_old" },
+    { "fn": "door_handle", "name": "Door_Handle",
+      "args": [2.4, [0.5, -3.1, 2.0]], "material": "gold" },
+
+    { "fn": "window_full", "name": "Win1",
+      "args": [1.6, 1.6, 0.12, [-3.0, -3.05, 2.5]], "material": "wood_old" },
+    { "fn": "window_full", "name": "Win2",
+      "args": [1.6, 1.6, 0.12, [3.0, -3.05, 2.5]], "material": "wood_old" },
+    { "fn": "window_full", "name": "Win3",
+      "args": [1.6, 1.6, 0.12, [-3.0, 3.05, 2.5]], "material": "wood_old" },
+    { "fn": "window_full", "name": "Win4",
+      "args": [1.6, 1.6, 0.12, [3.0, 3.05, 2.5]], "material": "wood_old" }
   ]
 }
