@@ -1,6 +1,6 @@
 # ============================================================
 # patterns/ak_constructive.py - CONSTRUCTIVE (236-250)
-# Protocol 4.2.0
+# Protocol 4.2.0 | roof_gable fixed (thickness)
 # ============================================================
 import bpy
 import math
@@ -43,21 +43,27 @@ def ceiling(name, W, D, T=0.12, pos=(0, 0, 0)):
 
 
 def roof_gable(name, W, H, D=1.0, angle_deg=35, pos=(0, 0, 0)):
-    """[239] Gable roof."""
+    """[239] Gable roof - FIXED with thickness (solid plates)."""
     parts = []
     half = W / 2
     slope_len = math.sqrt(half**2 + H**2)
+    thickness = 0.15
     for sign in (-1, 1):
-        bpy.ops.mesh.primitive_plane_add(
-            size=1.0,
-            location=(pos[0] + sign * half/2, pos[1], pos[2] + H/2))
+        # Use block (solid) instead of plane (zero thickness)
+        # Position: mid-point of slope
+        angle_rad = math.radians(sign * angle_deg)
+        # Center of the slope
+        cx = pos[0] + sign * half/2
+        cy = pos[1]
+        cz = pos[2] + H/2
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(cx, cy, cz))
         r = bpy.context.object
-        r.scale = (slope_len, D, 1)
-        r.rotation_euler = (math.radians(90), 0,
-                            math.radians(sign * angle_deg))
+        r.scale = (slope_len, D, thickness)
+        r.rotation_euler = (0, angle_rad, 0)
         apply_transform(r)
         parts.append(r)
-    parts.append(block(name + "_Ridge", (0.2, D, 0.2),
+    # Ridge (top block)
+    parts.append(block(name + "_Ridge", (0.25, D, 0.25),
                        (pos[0], pos[1], pos[2] + H)))
     return join_objects(parts, name, origin_mode='GEOMETRY')
 
