@@ -1,5 +1,5 @@
 # ============================================================
-# core/importer.py - Import with JOIN into single object
+# core/importer.py - FINAL FIX
 # Protocol 4.2.0
 # ============================================================
 import bpy
@@ -71,64 +71,68 @@ def list_models(kit_name, format_filter="OBJ"):
 
 
 def import_into_scene(kit_name, model_name, pos=(0, 0, 0), scale=1.0,
-                      prefer_format="OBJ", snap=True):
-    """Import model -> join all new meshes -> snap -> move. Returns single obj."""
+                      prefer_format="OBJ"):
+    """Import model:
+       1. Join all new meshes
+       2. Apply scale
+       3. Apply ALL transforms (freeze)
+       4. Move so bottom = 0 (in local)
+       5. Move to absolute pos
+    """
     filepath = get_model_path(kit_name, model_name, prefer_format)
     if not filepath:
         print("[ERROR] Model not found: {}".format(model_name))
         return None
 
-    # 1. Snapshot scene BEFORE
     before = _all_object_names()
-
-    # 2. Import
     import_model(filepath)
     bpy.context.view_layer.update()
 
-    # 3. Find NEW objects
     after = _all_object_names()
     new_names = after - before
     new_objs = [bpy.data.objects[n] for n in new_names
                 if n in bpy.data.objects and bpy.data.objects[n].type == 'MESH']
 
     if not new_objs:
-        print("[ERROR] No new meshes: {}".format(filepath))
+        print("[ERROR] No meshes: {}".format(filepath))
         return None
 
-    print("[IMPORT] {} -> {} mesh(es)".format(model_name, len(new_objs)))
-
-    # 4. Select new meshes + join
+    # Join all meshes
     bpy.ops.object.select_all(action='DESELECT')
     for o in new_objs:
         o.select_set(True)
     bpy.context.view_layer.objects.active = new_objs[0]
     if len(new_objs) > 1:
         bpy.ops.object.join()
-
     root = bpy.context.view_layer.objects.active
     root.name = model_name
 
-    # 5. Apply scale
+    # Apply scale
     if scale != 1.0:
         root.scale = (scale, scale, scale)
         bpy.ops.object.transform_apply(
             location=False, rotation=False, scale=True)
 
-    # 6. Snap to ground
-    if snap:
-        bpy.context.view_layer.update()
-        bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
-        min_z = min(v.z for v in bbox_world)
-        if abs(min_z) > 0.001:
-            root.location.z -= min_z
-
-    # 7. Apply all transforms (freeze)
+    # Apply rotation + location from import
     bpy.ops.object.transform_apply(
-        location=False, rotation=False, scale=True)
+        location=True, rotation=True, scale=False)
 
-    # 8. Move to pos
-    root.location.x = pos[0]
-    root.location.y = pos[1]
-    root.location.z = pos[2]
+    bpy.context.view_layer.update()
+
+    # Compute bottom in world (after all transforms)
+    bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
+    min_z = min(v.z for v in bbox_world)
+
+    # Move so bottom Z = 0
+    root.location.z -= min_z
+    bpy.context.view_layer.update()
+
+    # Apply transforms to freeze
+    bpy.ops.object.transform_apply(
+        location=True, rotation=False, scale=False)
+
+    # Now MOVE to absolute pos
+    root.location = (pos[0], pos[1], pos[2])
+    bpy.context.view_layer.update()
 
     return root
