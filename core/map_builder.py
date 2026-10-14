@@ -1,18 +1,5 @@
-def _verify_object(obj, model_name):
-    """Verify object is on ground (min_z в‰€ 0)."""
-    from mathutils import Vector
-    bpy.context.view_layer.update()
-    bbox = [obj.matrix_world @ Vector(c) for c in obj.bound_box]
-    min_z = min(v.z for v in bbox)
-    max_z = max(v.z for v in bbox)
-    status = "OK" if abs(min_z) < 0.5 else "FAIL"
-    print("[VERIFY {}] {}: bottom_z={:.2f}, top_z={:.2f}, pos=({:.1f},{:.1f},{:.1f})".format(
-        status, model_name, min_z, max_z,
-        obj.location.x, obj.location.y, obj.location.z))
-    return status == "OK"
-
 # ============================================================
-# core/map_builder.py - pos = [X, Z] (horizontal)
+# core/map_builder.py - with preview
 # Protocol 4.2.0
 # ============================================================
 import bpy
@@ -37,6 +24,20 @@ def _make_ground(name, size_x, size_y, thickness=0.5, pos=(0, 0, 0)):
         location=False, rotation=False, scale=True)
     ob.name = name
     return ob
+
+
+def _verify_object(obj, model_name):
+    """Verify object is on ground (min_z ~ 0)."""
+    from mathutils import Vector
+    bpy.context.view_layer.update()
+    bbox = [obj.matrix_world @ Vector(c) for c in obj.bound_box]
+    min_z = min(v.z for v in bbox)
+    max_z = max(v.z for v in bbox)
+    status = "OK" if abs(min_z) < 0.5 else "FAIL"
+    print("[VERIFY {}] {}: bottom_z={:.2f}, top_z={:.2f}, pos=({:.1f},{:.1f},{:.1f})".format(
+        status, model_name, min_z, max_z,
+        obj.location.x, obj.location.y, obj.location.z))
+    return status == "OK"
 
 
 def build_map(spec):
@@ -69,10 +70,9 @@ def build_map(spec):
         ob = import_into_scene(kit, model, pos_xz=pos, scale=scale,
                                prefer_format="OBJ")
         if ob:
-            _verify_object(ob, model)
-        if ob:
             if mat:
                 assign_mat(ob, mat)
+            _verify_object(ob, model)
             all_objects.append(ob)
             print("  -> {}: pos={}".format(ob.name,
                   tuple(round(v, 2) for v in ob.location)))
@@ -99,16 +99,20 @@ def build_map(spec):
 def process_map(ob, objects, spec):
     level = spec.get("level", "FULL")
     budget = spec.get("budget_tris", 20000)
+
     total_tris = 0
     for o in objects:
         if o.type == 'MESH':
             total_tris += count_tris(o)
+
     print("")
     print("[VALIDATOR] level={}, tris={}/{}".format(level, total_tris, budget))
     status = "OK" if total_tris <= budget else "FAIL"
     print("[VALIDATOR] status: {}".format(status))
+
     meshes = [o for o in objects if o.type == 'MESH']
     fbx_path = export_fbx(meshes, spec["name"])
+
     report = {
         "name": spec["name"],
         "level": level,
@@ -118,9 +122,7 @@ def process_map(ob, objects, spec):
         "validator": {"status": status, "errors": [], "warns": []},
         "fbx_path": fbx_path,
     }
-    from core.report import write_report
-from core.preview import render_preview as wr
-    wr(spec["name"], report)
+    write_report(spec["name"], report)
 
     # Render preview
     try:
