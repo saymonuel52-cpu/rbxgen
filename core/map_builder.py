@@ -52,8 +52,7 @@ def build_map(spec):
         if not model:
             continue
         print("[{}] {} / {} at {}".format(i, kit, model, pos))
-        ob = import_into_scene(kit, model, pos=pos, scale=scale,
-                               prefer_format="OBJ", snap=True)
+        ob = import_into_scene(kit, model, pos=pos, scale=scale, prefer_format="OBJ")
         if ob:
             if mat:
                 assign_mat(ob, mat)
