@@ -1,69 +1,106 @@
 # rbxgen
 
-**Roblox Object Factory** — генератор детализированных 3D-объектов для Roblox через Blender.
+**Roblox Map Factory** — сборка карт из открытых CC0-библиотек.
 
-Версия протокола: **4.2.0**
+Protocol: **4.2.0**
 
 ## Что это
 
-`rbxgen` — система из **паттернов** (Blender-функций), которые собираются в объекты по **JSON-пресетам**.
+rbxgen — инструмент для **автоматической сборки 3D-карт** из бесплатных
+моделей (Kenney Kit) через JSON-описания.
 
-## Ключевые возможности
+**Одна команда — готовая карта в Roblox Studio.**
 
-- 135 паттернов в 15 категориях
-- CLI-генератор: `blender --background --python rbxgen.py -- <preset>`
-- Валидатор геометрии (BASE / EXTENDED / FULL)
-- JSON-отчёты на каждый объект
-- FBX-экспорт с пресетом Roblox
-- Luau-генератор (Phase 2)
+## Архитектура
 
-## Структура
+Kit-библиотека -> JSON-карта -> Blender -> Studio
+assets_cache/  -> maps/*.json -> build_map.py -> FBX import
+(Kenney CC0)      (объекты +      (сборка +        (готово)
+                   позиции)        preview)
 
+## Что работает
 
+| Компонент | Что делает |
+|---|---|
+| core/downloader.py | Скачивание CC0 Kit с OpenGameArt |
+| core/importer.py | Импорт OBJ + scale + rotation + snap-to-ground |
+| core/map_builder.py | Сборка карты из JSON |
+| core/preview.py | 4-видовой preview (top, front, side, iso) |
+| core/kit_analyzer.py | Анализ всех моделей Kit |
+| build_map.py | CLI сборки |
+| generate_castle.py | Генератор крепости (78 объектов) |
+| generate_village.py | Генератор деревни (217 объектов) |
 
-## Установка
+## Быстрый старт
 
-Требуется Blender 3.6+ (LTS) и Python 3.10+ (встроен в Blender).
+### 1. Скачать Kit
 
-## Использование
+    blender --background --python-expr "import sys; sys.path.insert(0,'.'); from core.downloader import get_asset; get_asset('fantasy_town')"
 
-```bash
-blender --background --python rbxgen.py -- list
-blender --background --python rbxgen.py -- tree
-blender --background --python rbxgen.py -- house_detailed
+### 2. Сгенерировать карту
 
----
+    python3 generate_castle.py
+    python3 generate_village.py
 
-## ШАГ 2 — .gitignore
+### 3. Собрать в Blender
 
-```bash
-cat > .gitignore << 'EOF'
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-.venv/
+    blender --background --python build_map.py -- maps/castle.json
+    blender --background --python build_map.py -- maps/village.json
 
-# Blender
-*.blend1
-*.blend2
+### 4. Импорт в Studio
 
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
+- Roblox Studio: Home -> Import 3D -> выбрать Castle_Test.fbx
+- Anchored через Command Bar
 
-# IDE
-.vscode/
-.idea/
-*.swp
+## Доступные Kit
 
-# Project
-reports/*.json
-!reports/.gitkeep
-assets_cache/
-.env
+| Kit | Моделей | Источник |
+|---|---|---|
+| nature_kit | 329 | OpenGameArt |
+| fantasy_town | 167 | OpenGameArt |
+
+## Формат JSON-карты
+
+    {
+      "name": "Map_Name",
+      "level": "FULL",
+      "budget_tris": 20000,
+      "ground": {
+        "size": [100, 100],
+        "thickness": 0.5,
+        "material": "dirt"
+      },
+      "objects": [
+        {
+          "kit": "fantasy_town",
+          "model": "wall",
+          "pos": [X, Z],
+          "scale": 4.0,
+          "rotation": 0,
+          "material": "stone"
+        }
+      ]
+    }
+
+ВАЖНО:
+- pos = [X, Z] — горизонтальные координаты.
+- Высота всегда 0 (объект автоматически на земле).
+- rotation — в градусах вокруг вертикальной оси.
+
+## Повороты для стен
+
+| Сторона | rotation |
+|---|---|
+| Юг (-Z) | 0 |
+| Север (+Z) | 180 |
+| Запад (-X) | 90 |
+| Восток (+X) | -90 |
+
+## Правила стыковки
+
+См. docs/modular_rules.md.
+
+## Лицензия
+
+- Модели: CC0 (Public Domain) — Kenney.nl, OpenGameArt.org
+- Код: MIT
