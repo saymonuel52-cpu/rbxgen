@@ -1,0 +1,29 @@
+{
+  "name": "Forest_Test",
+  "level": "FULL",
+  "budget_tris": 20000,
+  "origin_mode": "CENTER",
+  "ground": {
+    "size": [80, 80],
+    "pos": [0, 0, 0],
+    "thickness": 0.5,
+    "material": "dirt"
+  },
+  "objects": [
+    { "kit": "nature_kit", "model": "tree_default",   "pos": [15, 0, 15],  "scale": 3.0, "material": "wood_old" },
+    { "kit": "nature_kit", "model": "tree_oak",       "pos": [-20, 0, 25], "scale": 3.0, "material": "wood_old" },
+    { "kit": "nature_kit", "model": "tree_pineTallA", "pos": [25, 0, -15], "scale": 3.0, "material": "wood_old" },
+    { "kit": "nature_kit", "model": "tree_pineRoundA", "pos": [-25, 0, -25], "scale": 3.0, "material": "wood_old" },
+    { "kit": "nature_kit", "model": "tree_small",     "pos": [5, 0, -30],  "scale": 3.0, "material": "wood_old" },
+    { "kit": "nature_kit", "model": "tree_palm",      "pos": [30, 0, 30],  "scale": 3.0, "material": "wood_old" },
+    { "kit": "nature_kit", "model": "tree_pineSmallA","pos": [-30, 0, 10], "scale": 3.0, "material": "wood_old" },
+    { "kit": "nature_kit", "model": "rock_largeA",    "pos": [30, 0, 0],   "scale": 2.5, "material": "stone" },
+    { "kit": "nature_kit", "model": "rock_largeB",    "pos": [-30, 0, -5], "scale": 2.5, "material": "stone" },
+    { "kit": "nature_kit", "model": "rock_smallA",    "pos": [10, 0, 30],  "scale": 2.0, "material": "stone" },
+    { "kit": "nature_kit", "model": "rock_smallB",    "pos": [-10, 0, -30], "scale": 2.0, "material": "stone" },
+    { "kit": "nature_kit", "model": "rock_tallA",     "pos": [0, 0, 35],   "scale": 2.5, "material": "stone" },
+    { "kit": "nature_kit", "model": "rock_tallC",     "pos": [0, 0, -35],  "scale": 2.5, "material": "stone" },
+    { "kit": "nature_kit", "model": "tree_default_dark", "pos": [20, 0, -25], "scale": 3.0, "material": "wood_old" },
+    { "kit": "nature_kit", "model": "tree_oak_dark",  "pos": [-20, 0, 30], "scale": 3.0, "material": "wood_old" }
+  ]
+}
