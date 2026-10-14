@@ -1,5 +1,5 @@
 # ============================================================
-# patterns/__init__.py — РЕЕСТР ПАТТЕРНОВ
+# patterns/__init__.py - PATTERN REGISTRY
 # Protocol 4.2.0
 # ============================================================
 from .aj_atomic import *
@@ -7,10 +7,11 @@ from .ak_constructive import *
 from .am_placement import *
 from .an_joints import *
 from .al_assembly import *
+from .ak_detail import *
 
 
 REGISTRY = {
-    # AJ — атомарные (10)
+    # AJ - atomic (10)
     'block':  {'fn': 'block',  'category': 'atomic'},
     'plate':  {'fn': 'plate',  'category': 'atomic'},
     'beam':   {'fn': 'beam',   'category': 'atomic'},
@@ -22,7 +23,7 @@ REGISTRY = {
     'wedge':  {'fn': 'wedge',  'category': 'atomic'},
     'grid_bars': {'fn': 'grid_bars', 'category': 'atomic'},
 
-    # AK — конструктивные (14)
+    # AK - constructive (14)
     'wall':      {'fn': 'wall',      'category': 'constructive'},
     'floor':     {'fn': 'floor',     'category': 'constructive'},
     'ceiling':   {'fn': 'ceiling',   'category': 'constructive'},
@@ -38,7 +39,7 @@ REGISTRY = {
     'cornice':   {'fn': 'cornice',   'category': 'constructive'},
     'parapet':   {'fn': 'parapet',   'category': 'constructive'},
 
-    # AM — размещения (7)
+    # AM - placement (7)
     'place_linear': {'fn': 'place_linear', 'category': 'placement'},
     'place_radial': {'fn': 'place_radial', 'category': 'placement'},
     'place_grid':   {'fn': 'place_grid',   'category': 'placement'},
@@ -47,7 +48,7 @@ REGISTRY = {
     'place_bezier': {'fn': 'place_bezier', 'category': 'placement'},
     'place_jitter': {'fn': 'place_jitter', 'category': 'placement'},
 
-    # AN — соединения (8)
+    # AN - joints (8)
     'connect_weld':           {'fn': 'connect_weld',           'category': 'joint'},
     'connect_hinge':          {'fn': 'connect_hinge',          'category': 'joint'},
     'connect_ball':           {'fn': 'connect_ball',           'category': 'joint'},
@@ -57,13 +58,25 @@ REGISTRY = {
     'connect_spring':         {'fn': 'connect_spring',         'category': 'joint'},
     'connect_weldconstraint': {'fn': 'connect_weldconstraint', 'category': 'joint'},
 
-    # AL — сборки (6)
+    # AL - assembly (6)
     'room':          {'fn': 'room',          'category': 'assembly'},
     'story':         {'fn': 'story',         'category': 'assembly'},
     'house_section': {'fn': 'house_section', 'category': 'assembly'},
     'tower':         {'fn': 'tower',         'category': 'assembly'},
     'mechanism':     {'fn': 'mechanism',     'category': 'assembly'},
     'nature':        {'fn': 'nature',        'category': 'assembly'},
+
+    # AK DETAIL - 10 new
+    'window_frame':   {'fn': 'window_frame',   'category': 'detail'},
+    'window_glass':   {'fn': 'window_glass',   'category': 'detail'},
+    'window_sill':    {'fn': 'window_sill',    'category': 'detail'},
+    'window_lintel':  {'fn': 'window_lintel',  'category': 'detail'},
+    'window_full':    {'fn': 'window_full',    'category': 'detail'},
+    'door_frame':     {'fn': 'door_frame',     'category': 'detail'},
+    'door_panel':     {'fn': 'door_panel',     'category': 'detail'},
+    'door_handle':    {'fn': 'door_handle',    'category': 'detail'},
+    'chimney':        {'fn': 'chimney',        'category': 'detail'},
+    'roof_tiles':     {'fn': 'roof_tiles',     'category': 'detail'},
 }
 
 
