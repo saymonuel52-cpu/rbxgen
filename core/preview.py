@@ -76,7 +76,7 @@ def _create_camera(location, target, name="PreviewCam"):
     cam.location = location
     direction = (Vector(target) - Vector(location)).normalized()
     cam.rotation_euler = direction.to_track_quat('-Z', 'Y').to_euler()
-    cam_data.lens = 50
+    cam_data.lens = 35
     return cam
 
 
@@ -156,7 +156,7 @@ def render_preview(map_name, views=None):
     _add_object_colors()
 
     # Camera distance: close enough to see objects
-    cam_dist = size * 0.8
+    cam_dist = size * 1.8
 
     print("[PREVIEW] bbox: min={}, max={}".format(
         tuple(round(v, 1) for v in min_v),
