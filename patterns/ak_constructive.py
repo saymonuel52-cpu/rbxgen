@@ -1,6 +1,6 @@
 # ============================================================
-# patterns/ak_constructive.py - CONSTRUCTIVE (simplified)
-# Protocol 4.2.0 | Minimal working version
+# patterns/ak_constructive.py - CONSTRUCTIVE
+# Protocol 4.2.0 | wall with rot_z
 # ============================================================
 import bpy
 import math
@@ -8,23 +8,31 @@ from core.scene import apply_transform, join_objects
 from patterns.aj_atomic import block, plate, beam, column, rod
 
 
-def wall(name, W, H, T, openings=None, pos=(0, 0, 0)):
-    """[236] Wall: simple solid block. size=(W, T, H)."""
-    return block(name, (W, T, H), (pos[0], pos[1], pos[2] + H/2))
+def wall(name, W, H, T, openings=None, pos=(0, 0, 0), rot_z=0.0):
+    """[236] Wall: solid block. rot_z in degrees."""
+    bpy.ops.mesh.primitive_cube_add(size=1.0,
+                                     location=(pos[0], pos[1], pos[2] + H/2))
+    ob = bpy.context.object
+    ob.scale = (W, T, H)
+    if rot_z != 0.0:
+        ob.rotation_euler = (0, 0, math.radians(rot_z))
+    apply_transform(ob)
+    ob.name = name
+    return ob
 
 
 def floor(name, W, D, T=0.15, n_beams=0, pos=(0, 0, 0)):
-    """[237] Floor: simple solid block. size=(W, D, T)."""
+    """[237] Floor."""
     return block(name, (W, D, T), pos)
 
 
 def ceiling(name, W, D, T=0.12, pos=(0, 0, 0)):
-    """[238] Ceiling: simple solid block."""
+    """[238] Ceiling."""
     return block(name, (W, D, T), pos)
 
 
 def roof_gable(name, W, H, D=1.0, angle_deg=35, pos=(0, 0, 0)):
-    """[239] Gable roof - solid plates with thickness."""
+    """[239] Gable roof."""
     parts = []
     half = W / 2
     slope_len = math.sqrt(half**2 + H**2)

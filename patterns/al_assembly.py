@@ -1,6 +1,6 @@
 # ============================================================
-# patterns/al_assembly.py - ASSEMBLY (simplified)
-# Protocol 4.2.0 | All parts in global coords
+# patterns/al_assembly.py - ASSEMBLY
+# Protocol 4.2.0 | Correct wall rotation
 # ============================================================
 from core.scene import join_objects
 from patterns.aj_atomic import block, column, rod, sphere, ring, cone
@@ -10,24 +10,25 @@ from patterns.am_placement import place_radial
 
 
 def _room_parts(prefix, W, D, H, cx, cy, cz):
-    """Return list of parts for room, at global coords."""
-    T = 0.2  # wall thickness
+    """Room parts, GLOBAL coords. Side walls rotated 90 deg."""
+    T = 0.2
     parts = []
-    # Floor (at bottom)
-    parts.append(floor(prefix + "_Floor", W, D, T,
-                       0, (cx, cy, cz)))
-    # Ceiling (at top)
-    parts.append(ceiling(prefix + "_Ceil", W, D, T,
-                         (cx, cy, cz + H)))
-    # 4 walls (each solid block)
+    # Floor
+    parts.append(floor(prefix + "_Floor", W, D, T, 0, (cx, cy, cz)))
+    # Ceiling
+    parts.append(ceiling(prefix + "_Ceil", W, D, T, (cx, cy, cz + H)))
+    # South wall - parallel to X
     parts.append(wall(prefix + "_W_S", W, H, T, None,
-                      (cx, cy - D/2 + T/2, cz)))
+                      (cx, cy - D/2 + T/2, cz), rot_z=0))
+    # North wall - parallel to X
     parts.append(wall(prefix + "_W_N", W, H, T, None,
-                      (cx, cy + D/2 - T/2, cz)))
-    parts.append(wall(prefix + "_W_W", D - T*2, H, T, None,
-                      (cx - W/2 + T/2, cy, cz)))
-    parts.append(wall(prefix + "_W_E", D - T*2, H, T, None,
-                      (cx + W/2 - T/2, cy, cz)))
+                      (cx, cy + D/2 - T/2, cz), rot_z=0))
+    # West wall - parallel to Y (rotated 90)
+    parts.append(wall(prefix + "_W_W", D, H, T, None,
+                      (cx - W/2 + T/2, cy, cz), rot_z=90))
+    # East wall - parallel to Y (rotated 90)
+    parts.append(wall(prefix + "_W_E", D, H, T, None,
+                      (cx + W/2 - T/2, cy, cz), rot_z=90))
     return parts
 
 
@@ -43,23 +44,18 @@ def story(name, W, D, H, n_rooms=1, pos=(0, 0, 0)):
     room_w = W / n_rooms
     for i in range(n_rooms):
         x = -W/2 + (i + 0.5) * room_w
-        parts += _room_parts(
-            name + "_R" + str(i),
-            room_w * 0.95, D, H,
-            pos[0] + x, pos[1], pos[2]
-        )
+        parts += _room_parts(name + "_R" + str(i),
+                             room_w * 0.95, D, H,
+                             pos[0] + x, pos[1], pos[2])
     return join_objects(parts, name, origin_mode='GEOMETRY')
 
 
 def house_section(name, W, D, H, roof_type='gable', pos=(0, 0, 0)):
-    """[253] House - base + room + roof."""
+    """[253] House."""
     parts = []
-    # Base plate
     parts.append(block(name + "_Base", (W + 0.6, D + 0.6, 0.3),
                        (pos[0], pos[1], pos[2] + 0.15)))
-    # Room
     parts += _room_parts(name, W, D, H, pos[0], pos[1], pos[2] + 0.3)
-    # Roof
     roof_z = pos[2] + 0.3 + H
     if roof_type == 'gable':
         parts.append(roof_gable(name + "_Roof", W + 0.8, H * 0.5, D + 0.8,
