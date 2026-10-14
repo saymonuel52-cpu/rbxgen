@@ -1,6 +1,6 @@
 # ============================================================
 # patterns/al_assembly.py - ASSEMBLY (251-262)
-# Protocol 4.2.0
+# Protocol 4.2.0 | Fixed nested joins
 # ============================================================
 from core.scene import join_objects
 from patterns.aj_atomic import block, column, rod, sphere, ring, cone
@@ -9,49 +9,64 @@ from patterns.ak_constructive import (wall, floor, ceiling, roof_gable,
 from patterns.am_placement import place_radial
 
 
-def room(name, W, D, H, has_door=True, has_window=True, pos=(0, 0, 0)):
-    """[251] Room."""
-    parts = [floor(name + "_Floor", W, D, 0.15, 4, pos)]
-    parts.append(ceiling(name + "_Ceil", W, D, 0.12,
+def _collect_room_parts(prefix, W, D, H, pos):
+    """Helper: returns list of parts (not joined)."""
+    parts = [floor(prefix + "_Floor", W, D, 0.15, 4, pos)]
+    parts.append(ceiling(prefix + "_Ceil", W, D, 0.12,
                          (pos[0], pos[1], pos[2] + H)))
-    parts.append(wall(name + "_W1", W, H, 0.15,
+    parts.append(wall(prefix + "_W1", W, H, 0.15,
                       None, (pos[0], pos[1] - D/2, pos[2])))
-    parts.append(wall(name + "_W2", W, H, 0.15,
+    parts.append(wall(prefix + "_W2", W, H, 0.15,
                       None, (pos[0], pos[1] + D/2, pos[2])))
-    parts.append(wall(name + "_W3", D, H, 0.15,
+    parts.append(wall(prefix + "_W3", D, H, 0.15,
                       None, (pos[0] - W/2, pos[1], pos[2])))
-    parts.append(wall(name + "_W4", D, H, 0.15,
+    parts.append(wall(prefix + "_W4", D, H, 0.15,
                       None, (pos[0] + W/2, pos[1], pos[2])))
-    return join_objects(parts, name, origin_mode='CENTER')
+    return parts
+
+
+def room(name, W, D, H, has_door=True, has_window=True, pos=(0, 0, 0)):
+    """[251] Room (standalone)."""
+    parts = _collect_room_parts(name, W, D, H, pos)
+    return join_objects(parts, name, origin_mode='GEOMETRY')
 
 
 def story(name, W, D, H, n_rooms=1, pos=(0, 0, 0)):
-    """[252] Story."""
+    """[252] Story - collect all parts, join once."""
     parts = []
     room_w = W / n_rooms
     for i in range(n_rooms):
         x = -W/2 + (i + 0.5) * room_w
-        parts.append(room(name + "_Room" + str(i), room_w * 0.95, D, H,
-                          True, True, (pos[0] + x, pos[1], pos[2])))
+        parts += _collect_room_parts(
+            name + "_Room" + str(i),
+            room_w * 0.95, D, H,
+            (pos[0] + x, pos[1], pos[2])
+        )
     if n_rooms > 1:
         parts.append(stairs(name + "_Stairs", 8, 0.8, 0.3, 0.4,
                             (pos[0], pos[1] - D/2 - 1.5, pos[2])))
-    return join_objects(parts, name, origin_mode='CENTER')
+    return join_objects(parts, name, origin_mode='GEOMETRY')
 
 
 def house_section(name, W, D, H, roof_type='gable', pos=(0, 0, 0)):
-    """[253] House section."""
-    parts = [block(name + "_Base", (W + 0.6, D + 0.6, 0.3),
-                   (pos[0], pos[1], pos[2] + 0.15))]
-    parts.append(room(name + "_Room", W, D, H,
-                      True, True, (pos[0], pos[1], pos[2] + 0.3)))
+    """[253] House section - collect ALL parts, join ONCE."""
+    parts = []
+    # Base plate
+    parts.append(block(name + "_Base", (W + 0.6, D + 0.6, 0.3),
+                       (pos[0], pos[1], pos[2] + 0.15)))
+    # Room (walls + floor + ceiling)
+    parts += _collect_room_parts(
+        name + "_Room", W, D, H,
+        (pos[0], pos[1], pos[2] + 0.3)
+    )
+    # Roof
     if roof_type == 'gable':
         parts.append(roof_gable(name + "_Roof", W + 0.8, H * 0.5, D + 0.8,
                                 35, (pos[0], pos[1], pos[2] + H + 0.3)))
     else:
         parts.append(roof_hip(name + "_Roof", W + 0.8, D + 0.8, H * 0.5,
                               (pos[0], pos[1], pos[2] + H + 0.3)))
-    return join_objects(parts, name, origin_mode='CENTER')
+    return join_objects(parts, name, origin_mode='GEOMETRY')
 
 
 def tower(name, h, d, roof_type='hip', pos=(0, 0, 0)):
@@ -60,7 +75,7 @@ def tower(name, h, d, roof_type='hip', pos=(0, 0, 0)):
     if roof_type == 'hip':
         parts.append(roof_hip(name + "_Roof", d + 0.4, d + 0.4, d * 0.6,
                               (pos[0], pos[1], pos[2] + h)))
-    return join_objects(parts, name, origin_mode='CENTER')
+    return join_objects(parts, name, origin_mode='GEOMETRY')
 
 
 def mechanism(name, frame_w, frame_d, n_wheels, pos=(0, 0, 0)):
@@ -76,7 +91,7 @@ def mechanism(name, frame_w, frame_d, n_wheels, pos=(0, 0, 0)):
     for i, sp in enumerate(spokes):
         parts.append(block(name + "_Spoke" + str(i),
                            (0.06, 0.06, wheel_r*0.7), sp))
-    return join_objects(parts, name, origin_mode='CENTER')
+    return join_objects(parts, name, origin_mode='GEOMETRY')
 
 
 def nature(name, trunk_h, n_branches=4, n_leaves=3, pos=(0, 0, 0)):
@@ -91,4 +106,4 @@ def nature(name, trunk_h, n_branches=4, n_leaves=3, pos=(0, 0, 0)):
         (pos[0], pos[1], pos[2] + trunk_h + 0.6), 0.8, n_leaves)
     for i, lp in enumerate(leaf_pos):
         parts.append(sphere(name + "_Leaf" + str(i), 0.9, 8, 6, lp))
-    return join_objects(parts, name, origin_mode='CENTER')
+    return join_objects(parts, name, origin_mode='GEOMETRY')
