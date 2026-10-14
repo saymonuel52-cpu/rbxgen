@@ -1,5 +1,5 @@
 # ============================================================
-# core/scene.py - Scene management (v2, join fixed)
+# core/scene.py - Scene management v3 (with Bevel)
 # Protocol 4.2.0
 # ============================================================
 import bpy
@@ -30,11 +30,39 @@ def select_only(ob):
     bpy.context.view_layer.objects.active = ob
 
 
-def apply_transform(ob, location=False, rotation=True, scale=True):
-    """[1] bake transform before join."""
+def add_bevel(ob, width=0.02, segments=2):
+    """[NEW] Add Bevel modifier for edge detail.
+    
+    Bevel makes edges catch light, so objects stop looking like
+    'plastic cubes'. This is the single biggest visual upgrade.
+    
+    width=0.02 -> subtle bevel, good for most parts.
+    width=0.05 -> chunky bevel, good for stylized blocks.
+    segments=2 -> 2 bevel segments (balance between detail and tris).
+    """
+    if not ob or not ob.data:
+        return
+    # Remove existing bevel if any
+    for m in list(ob.modifiers):
+        if m.type == 'BEVEL':
+            ob.modifiers.remove(m)
+    mod = ob.modifiers.new(name="Bevel", type='BEVEL')
+    mod.width = width
+    mod.segments = segments
+    mod.limit_method = 'ANGLE'
+    mod.angle_limit = math.radians(30)
+    mod.harden_normals = False
+    mod.use_clamp_overlap = True
+
+
+def apply_transform(ob, location=False, rotation=True, scale=True,
+                    bevel=True, bevel_width=0.02):
+    """[1] bake transform + [NEW] add bevel modifier."""
     select_only(ob)
     bpy.ops.object.transform_apply(
         location=location, rotation=rotation, scale=scale)
+    if bevel:
+        add_bevel(ob, width=bevel_width)
 
 
 def join_objects(objs, name, origin_mode='CENTER'):
@@ -46,7 +74,6 @@ def join_objects(objs, name, origin_mode='CENTER'):
         joined = objs[0]
         joined.name = name
     else:
-        # Ensure all objects are in current view layer
         view_layer = bpy.context.view_layer
         for o in objs:
             if o.name not in view_layer.objects:
@@ -60,7 +87,6 @@ def join_objects(objs, name, origin_mode='CENTER'):
             o.select_set(True)
         view_layer.objects.active = objs[0]
 
-        # Use temp_override to ensure join context
         try:
             with bpy.context.temp_override(
                 active_object=objs[0],
@@ -73,6 +99,15 @@ def join_objects(objs, name, origin_mode='CENTER'):
 
         joined = bpy.context.view_layer.objects.active
         joined.name = name
+
+    # Apply bevel modifiers
+    select_only(joined)
+    for m in list(joined.modifiers):
+        if m.type == 'BEVEL':
+            try:
+                bpy.ops.object.modifier_apply(modifier=m.name)
+            except Exception:
+                pass
 
     # Set Origin
     if origin_mode == 'CENTER':
