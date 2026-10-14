@@ -2,7 +2,7 @@
   "name": "House_Country",
   "level": "FULL",
   "budget_tris": 20000,
-  "origin_mode": "GEOMETRY",
+  "origin_mode": "CENTER",
   "nodes": [
     { "fn": "block", "name": "House_Base",
       "args": [[9.0, 7.0, 0.3], [0, 0, 0.15]], "material": "stone" },
@@ -24,7 +24,7 @@
     { "fn": "roof_gable", "name": "Roof",
       "args": [8.8, 2.0, 6.8, 35, [0, 0, 4.3]], "material": "straw" },
     { "fn": "roof_tiles", "name": "RoofTiles",
-      "args": [8.8, 6.8, 35, 4, 6, [0, 0, 4.3]], "material": "stone" },
+      "args": [8.8, 6.8, 35, 3, 4, [0, 0, 4.3]], "material": "stone" },
 
     { "fn": "chimney", "name": "Chimney",
       "args": [0.8, 0.8, 3.5, [2.0, 0, 4.3]], "material": "stone" },
