@@ -1,0 +1,878 @@
+{
+  "name": "Castle_Test",
+  "level": "FULL",
+  "budget_tris": 20000,
+  "ground": {
+    "size": [
+      76.8,
+      76.8
+    ],
+    "pos": [
+      0,
+      0,
+      0
+    ],
+    "thickness": 0.5,
+    "material": "dirt"
+  },
+  "objects": [
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -12.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -4.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-doorway-square-wide",
+      "pos": [
+        0.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        4.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        12.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -12.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -8.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -4.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        0.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        4.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        8.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        12.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        -12.0
+      ],
+      "scale": 4.0,
+      "rotation": 90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        -8.0
+      ],
+      "scale": 4.0,
+      "rotation": 90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        -4.0
+      ],
+      "scale": 4.0,
+      "rotation": 90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        0.0
+      ],
+      "scale": 4.0,
+      "rotation": 90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        4.0
+      ],
+      "scale": 4.0,
+      "rotation": 90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        8.0
+      ],
+      "scale": 4.0,
+      "rotation": 90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        12.0
+      ],
+      "scale": 4.0,
+      "rotation": 90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        -12.0
+      ],
+      "scale": 4.0,
+      "rotation": -90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        -8.0
+      ],
+      "scale": 4.0,
+      "rotation": -90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        -4.0
+      ],
+      "scale": 4.0,
+      "rotation": -90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        0.0
+      ],
+      "scale": 4.0,
+      "rotation": -90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        4.0
+      ],
+      "scale": 4.0,
+      "rotation": -90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        8.0
+      ],
+      "scale": 4.0,
+      "rotation": -90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        12.0
+      ],
+      "scale": 4.0,
+      "rotation": -90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-corner",
+      "pos": [
+        -16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-corner",
+      "pos": [
+        16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": -90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-corner",
+      "pos": [
+        16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 180,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-corner",
+      "pos": [
+        -16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 90,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        -16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        -16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "roof-high-point",
+      "pos": [
+        -16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "roof-high-point",
+      "pos": [
+        16.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "roof-high-point",
+      "pos": [
+        16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        -16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        -16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "roof-high-point",
+      "pos": [
+        -16.0,
+        16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        -8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        -8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        -8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "roof-high-point",
+      "pos": [
+        -8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall",
+      "pos": [
+        8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "wall-window-small",
+      "pos": [
+        8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "roof-high-point",
+      "pos": [
+        8.0,
+        -16.0
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "fountain-square",
+      "pos": [
+        0,
+        0
+      ],
+      "scale": 4.8,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "fountain-center",
+      "pos": [
+        0,
+        0
+      ],
+      "scale": 4.8,
+      "rotation": 0,
+      "material": "stone"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "lantern",
+      "pos": [
+        12.0,
+        12.0
+      ],
+      "scale": 6.0,
+      "rotation": 0,
+      "material": "iron"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "lantern",
+      "pos": [
+        -12.0,
+        12.0
+      ],
+      "scale": 6.0,
+      "rotation": 0,
+      "material": "iron"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "lantern",
+      "pos": [
+        12.0,
+        -12.0
+      ],
+      "scale": 6.0,
+      "rotation": 0,
+      "material": "iron"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "lantern",
+      "pos": [
+        -12.0,
+        -12.0
+      ],
+      "scale": 6.0,
+      "rotation": 0,
+      "material": "iron"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "cart",
+      "pos": [
+        4,
+        -2
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "wood_old"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "cart-high",
+      "pos": [
+        -4,
+        -2
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "wood_old"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "hedge-large",
+      "pos": [
+        5,
+        5
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "leaf"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "hedge-large",
+      "pos": [
+        -5,
+        5
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "leaf"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "hedge-large",
+      "pos": [
+        5,
+        -5
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "leaf"
+    },
+    {
+      "kit": "fantasy_town",
+      "model": "hedge-large",
+      "pos": [
+        -5,
+        -5
+      ],
+      "scale": 4.0,
+      "rotation": 0,
+      "material": "leaf"
+    }
+  ]
+}
