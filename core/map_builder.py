@@ -1,20 +1,19 @@
 # ============================================================
-# core/map_builder.py - Ground fixed
+# core/map_builder.py - pos = [X, Z] (horizontal)
 # Protocol 4.2.0
 # ============================================================
 import bpy
 import os
 import json
-from core.scene import (clear_scene, setup_units, add_uv_smart, count_tris)
+from core.scene import (clear_scene, setup_units, count_tris)
 from core.importer import import_into_scene
 from core.materials import assign as assign_mat
 from core.export import export_fbx
-from core.validator import validate
 from core.report import write_report
 
 
 def _make_ground(name, size_x, size_y, thickness=0.5, pos=(0, 0, 0)):
-    """Create ground plate: top at Z=0, extends down."""
+    """Ground: top at Z=0, extends down."""
     bpy.ops.mesh.primitive_cube_add(
         size=1.0,
         location=(pos[0], pos[1], pos[2] - thickness/2))
@@ -32,7 +31,6 @@ def build_map(spec):
     objects = spec.get("objects", [])
     all_objects = []
 
-    # Ground
     if ground_spec:
         size = ground_spec.get("size", [100, 100])
         pos = ground_spec.get("pos", [0, 0, 0])
@@ -41,18 +39,21 @@ def build_map(spec):
         if ground_spec.get("material"):
             assign_mat(g, ground_spec["material"])
         all_objects.append(g)
-        print("[GROUND] {} x {} at y={}".format(size[0], size[1], pos[2]))
+        print("[GROUND] {} x {}".format(size[0], size[1]))
 
     for i, obj_spec in enumerate(objects):
         kit = obj_spec.get("kit", "nature_kit")
         model = obj_spec.get("model")
-        pos = obj_spec.get("pos", [0, 0, 0])
+        pos = obj_spec.get("pos", [0, 0])
         scale = obj_spec.get("scale", 1.0)
         mat = obj_spec.get("material")
+
         if not model:
             continue
-        print("[{}] {} / {} at {}".format(i, kit, model, pos))
-        ob = import_into_scene(kit, model, pos=pos, scale=scale, prefer_format="OBJ")
+
+        print("[{}] {} / {} at [X={}, Z={}]".format(i, kit, model, pos[0], pos[1]))
+        ob = import_into_scene(kit, model, pos_xz=pos, scale=scale,
+                               prefer_format="OBJ")
         if ob:
             if mat:
                 assign_mat(ob, mat)
@@ -101,5 +102,6 @@ def process_map(ob, objects, spec):
         "validator": {"status": status, "errors": [], "warns": []},
         "fbx_path": fbx_path,
     }
-    write_report(spec["name"], report)
+    from core.report import write_report as wr
+    wr(spec["name"], report)
     return report

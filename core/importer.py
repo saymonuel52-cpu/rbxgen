@@ -1,6 +1,6 @@
 # ============================================================
-# core/importer.py - FINAL FIX
-# Protocol 4.2.0
+# core/importer.py - FINAL CORRECT
+# JSON pos = [X, Z], height always 0
 # ============================================================
 import bpy
 import os
@@ -70,14 +70,12 @@ def list_models(kit_name, format_filter="OBJ"):
     return sorted(models)
 
 
-def import_into_scene(kit_name, model_name, pos=(0, 0, 0), scale=1.0,
+def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
                       prefer_format="OBJ"):
-    """Import model:
-       1. Join all new meshes
-       2. Apply scale
-       3. Apply ALL transforms (freeze)
-       4. Move so bottom = 0 (in local)
-       5. Move to absolute pos
+    """Import model, place on ground at (pos_xz[0], pos_xz[1]).
+
+    pos_xz = [X, Z] in Blender-horizontal plane.
+    Height (Y in Blender = Z in Roblox) is ALWAYS 0.
     """
     filepath = get_model_path(kit_name, model_name, prefer_format)
     if not filepath:
@@ -97,7 +95,7 @@ def import_into_scene(kit_name, model_name, pos=(0, 0, 0), scale=1.0,
         print("[ERROR] No meshes: {}".format(filepath))
         return None
 
-    # Join all meshes
+    # Join
     bpy.ops.object.select_all(action='DESELECT')
     for o in new_objs:
         o.select_set(True)
@@ -113,26 +111,31 @@ def import_into_scene(kit_name, model_name, pos=(0, 0, 0), scale=1.0,
         bpy.ops.object.transform_apply(
             location=False, rotation=False, scale=True)
 
-    # Apply rotation + location from import
+    # Apply rotation + location (freeze)
     bpy.ops.object.transform_apply(
         location=True, rotation=True, scale=False)
 
     bpy.context.view_layer.update()
 
-    # Compute bottom in world (after all transforms)
+    # Compute world bbox
     bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
     min_z = min(v.z for v in bbox_world)
 
-    # Move so bottom Z = 0
+    # Move so bottom is at Z=0
     root.location.z -= min_z
     bpy.context.view_layer.update()
 
-    # Apply transforms to freeze
+    # Freeze
     bpy.ops.object.transform_apply(
         location=True, rotation=False, scale=False)
 
-    # Now MOVE to absolute pos
-    root.location = (pos[0], pos[1], pos[2])
+    # ============================================================
+    # FINAL POSITION: X = pos_xz[0], Y (Blender depth) = pos_xz[1], Z = 0
+    # Blender: X, Y, Z (up)
+    # JSON gives [X, Z_horizontal] = [Blender X, Blender Y]
+    # Height (Blender Z) is ALWAYS 0.
+    # ============================================================
+    root.location = (pos_xz[0], pos_xz[1], 0.0)
     bpy.context.view_layer.update()
 
     return root
