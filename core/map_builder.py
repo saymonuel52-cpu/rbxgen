@@ -1,5 +1,5 @@
 def _verify_object(obj, model_name):
-    """Verify object is on ground (min_z ≈ 0)."""
+    """Verify object is on ground (min_z в‰€ 0)."""
     from mathutils import Vector
     bpy.context.view_layer.update()
     bbox = [obj.matrix_world @ Vector(c) for c in obj.bound_box]
@@ -23,6 +23,7 @@ from core.importer import import_into_scene
 from core.materials import assign as assign_mat
 from core.export import export_fbx
 from core.report import write_report
+from core.preview import render_preview
 
 
 def _make_ground(name, size_x, size_y, thickness=0.5, pos=(0, 0, 0)):
@@ -117,6 +118,16 @@ def process_map(ob, objects, spec):
         "validator": {"status": status, "errors": [], "warns": []},
         "fbx_path": fbx_path,
     }
-    from core.report import write_report as wr
+    from core.report import write_report
+from core.preview import render_preview as wr
     wr(spec["name"], report)
+
+    # Render preview
+    try:
+        print("")
+        print("[PREVIEW] Rendering 4 views...")
+        render_preview(spec["name"])
+    except Exception as e:
+        print("[WARN] Preview failed: {}".format(e))
+
     return report
