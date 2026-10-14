@@ -1,11 +1,10 @@
 # ============================================================
-# core/map_builder.py - with preview
+# core/map_builder.py - with rotation support
 # Protocol 4.2.0
 # ============================================================
 import bpy
 import os
-import json
-from core.scene import (clear_scene, setup_units, count_tris)
+from core.scene import count_tris
 from core.importer import import_into_scene
 from core.materials import assign as assign_mat
 from core.export import export_fbx
@@ -14,7 +13,7 @@ from core.preview import render_preview
 
 
 def _make_ground(name, size_x, size_y, thickness=0.5, pos=(0, 0, 0)):
-    """Ground: top at Z=0, extends down."""
+    """Ground: top at Z=0."""
     bpy.ops.mesh.primitive_cube_add(
         size=1.0,
         location=(pos[0], pos[1], pos[2] - thickness/2))
@@ -27,7 +26,6 @@ def _make_ground(name, size_x, size_y, thickness=0.5, pos=(0, 0, 0)):
 
 
 def _verify_object(obj, model_name):
-    """Verify object is on ground (min_z ~ 0)."""
     from mathutils import Vector
     bpy.context.view_layer.update()
     bbox = [obj.matrix_world @ Vector(c) for c in obj.bound_box]
@@ -61,14 +59,16 @@ def build_map(spec):
         model = obj_spec.get("model")
         pos = obj_spec.get("pos", [0, 0])
         scale = obj_spec.get("scale", 1.0)
+        rotation = obj_spec.get("rotation", 0.0)
         mat = obj_spec.get("material")
 
         if not model:
             continue
 
-        print("[{}] {} / {} at [X={}, Z={}]".format(i, kit, model, pos[0], pos[1]))
+        print("[{}] {} / {} at [X={}, Z={}] rot={}°".format(
+            i, kit, model, pos[0], pos[1], rotation))
         ob = import_into_scene(kit, model, pos_xz=pos, scale=scale,
-                               prefer_format="OBJ")
+                               rotation_z=rotation, prefer_format="OBJ")
         if ob:
             if mat:
                 assign_mat(ob, mat)
@@ -124,7 +124,6 @@ def process_map(ob, objects, spec):
     }
     write_report(spec["name"], report)
 
-    # Render preview
     try:
         print("")
         print("[PREVIEW] Rendering 4 views...")

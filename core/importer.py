@@ -1,9 +1,10 @@
 # ============================================================
-# core/importer.py - FINAL CORRECT
-# JSON pos = [X, Z], height always 0
+# core/importer.py - Import with rotation_z support
+# Protocol 4.2.0
 # ============================================================
 import bpy
 import os
+import math
 from mathutils import Vector
 
 CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "assets_cache")
@@ -71,11 +72,12 @@ def list_models(kit_name, format_filter="OBJ"):
 
 
 def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
-                      prefer_format="OBJ"):
-    """Import model, place on ground at (pos_xz[0], pos_xz[1]).
-
-    pos_xz = [X, Z] in Blender-horizontal plane.
-    Height (Y in Blender = Z in Roblox) is ALWAYS 0.
+                      rotation_z=0.0, prefer_format="OBJ"):
+    """Import model with position, scale, rotation.
+    
+    pos_xz = [X, Z] in Blender horizontal plane.
+    rotation_z = degrees around vertical axis (Blender Z, Roblox Y).
+    Height (Blender Z) is always 0 (on ground).
     """
     filepath = get_model_path(kit_name, model_name, prefer_format)
     if not filepath:
@@ -95,7 +97,7 @@ def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
         print("[ERROR] No meshes: {}".format(filepath))
         return None
 
-    # Join
+    # Join into one
     bpy.ops.object.select_all(action='DESELECT')
     for o in new_objs:
         o.select_set(True)
@@ -105,36 +107,35 @@ def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
     root = bpy.context.view_layer.objects.active
     root.name = model_name
 
-    # Apply scale
+    # 1. Apply scale
     if scale != 1.0:
         root.scale = (scale, scale, scale)
         bpy.ops.object.transform_apply(
             location=False, rotation=False, scale=True)
 
-    # Apply rotation + location (freeze)
-    bpy.ops.object.transform_apply(
-        location=True, rotation=True, scale=False)
+    # 2. Apply rotation (around vertical Z)
+    if rotation_z != 0.0:
+        root.rotation_euler = (0, 0, math.radians(rotation_z))
+        bpy.ops.object.transform_apply(
+            location=False, rotation=True, scale=False)
 
-    bpy.context.view_layer.update()
-
-    # Compute world bbox
-    bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
-    min_z = min(v.z for v in bbox_world)
-
-    # Move so bottom is at Z=0
-    root.location.z -= min_z
-    bpy.context.view_layer.update()
-
-    # Freeze
+    # 3. Freeze location
     bpy.ops.object.transform_apply(
         location=True, rotation=False, scale=False)
 
-    # ============================================================
-    # FINAL POSITION: X = pos_xz[0], Y (Blender depth) = pos_xz[1], Z = 0
-    # Blender: X, Y, Z (up)
-    # JSON gives [X, Z_horizontal] = [Blender X, Blender Y]
-    # Height (Blender Z) is ALWAYS 0.
-    # ============================================================
+    bpy.context.view_layer.update()
+
+    # 4. Snap to ground (min_z = 0)
+    bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
+    min_z = min(v.z for v in bbox_world)
+    root.location.z -= min_z
+    bpy.context.view_layer.update()
+
+    # 5. Freeze
+    bpy.ops.object.transform_apply(
+        location=True, rotation=False, scale=False)
+
+    # 6. Move to absolute pos
     root.location = (pos_xz[0], pos_xz[1], 0.0)
     bpy.context.view_layer.update()
 
