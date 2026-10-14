@@ -1,3 +1,16 @@
+def _verify_object(obj, model_name):
+    """Verify object is on ground (min_z ≈ 0)."""
+    from mathutils import Vector
+    bpy.context.view_layer.update()
+    bbox = [obj.matrix_world @ Vector(c) for c in obj.bound_box]
+    min_z = min(v.z for v in bbox)
+    max_z = max(v.z for v in bbox)
+    status = "OK" if abs(min_z) < 0.5 else "FAIL"
+    print("[VERIFY {}] {}: bottom_z={:.2f}, top_z={:.2f}, pos=({:.1f},{:.1f},{:.1f})".format(
+        status, model_name, min_z, max_z,
+        obj.location.x, obj.location.y, obj.location.z))
+    return status == "OK"
+
 # ============================================================
 # core/map_builder.py - pos = [X, Z] (horizontal)
 # Protocol 4.2.0
@@ -54,6 +67,8 @@ def build_map(spec):
         print("[{}] {} / {} at [X={}, Z={}]".format(i, kit, model, pos[0], pos[1]))
         ob = import_into_scene(kit, model, pos_xz=pos, scale=scale,
                                prefer_format="OBJ")
+        if ob:
+            _verify_object(ob, model)
         if ob:
             if mat:
                 assign_mat(ob, mat)
