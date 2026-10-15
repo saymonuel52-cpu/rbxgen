@@ -1,5 +1,5 @@
 # ============================================================
-# core/importer.py - Import with rotation_z support
+# core/importer.py - FINAL FIX (center bbox at pos)
 # Protocol 4.2.0
 # ============================================================
 import bpy
@@ -41,10 +41,10 @@ def get_model_path(kit_name, model_name, prefer_format="OBJ"):
     fmt_path = os.path.join(kit_dir, "Models", fmt_dir)
     if not os.path.exists(fmt_path):
         return None
-    for root, dirs, files in os.walk(fmt_path):
+    for root_dir, dirs, files in os.walk(fmt_path):
         for f in files:
             if f.lower() == model_name.lower() + ext:
-                return os.path.join(root, f)
+                return os.path.join(root_dir, f)
     return None
 
 
@@ -64,7 +64,7 @@ def list_models(kit_name, format_filter="OBJ"):
     if not os.path.exists(fmt_path):
         return []
     models = []
-    for root, dirs, files in os.walk(fmt_path):
+    for root_dir, dirs, files in os.walk(fmt_path):
         for f in files:
             if f.lower().endswith(ext):
                 models.append(os.path.splitext(f)[0])
@@ -73,11 +73,13 @@ def list_models(kit_name, format_filter="OBJ"):
 
 def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
                       rotation_z=0.0, prefer_format="OBJ"):
-    """Import model with position, scale, rotation.
-    
-    pos_xz = [X, Z] in Blender horizontal plane.
-    rotation_z = degrees around vertical axis (Blender Z, Roblox Y).
-    Height (Blender Z) is always 0 (on ground).
+    """Import model:
+       1. Join new meshes
+       2. Apply scale
+       3. Apply rotation
+       4. Apply all transforms (freeze)
+       5. Snap bottom to ground
+       6. Move so BBOX CENTER is at pos_xz
     """
     filepath = get_model_path(kit_name, model_name, prefer_format)
     if not filepath:
@@ -97,7 +99,7 @@ def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
         print("[ERROR] No meshes: {}".format(filepath))
         return None
 
-    # Join into one
+    # Join all
     bpy.ops.object.select_all(action='DESELECT')
     for o in new_objs:
         o.select_set(True)
@@ -107,36 +109,40 @@ def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
     root = bpy.context.view_layer.objects.active
     root.name = model_name
 
-    # 1. Apply scale
+    # Apply scale
     if scale != 1.0:
         root.scale = (scale, scale, scale)
         bpy.ops.object.transform_apply(
             location=False, rotation=False, scale=True)
 
-    # 2. Apply rotation (around vertical Z)
+    # Apply rotation (around Z)
     if rotation_z != 0.0:
         root.rotation_euler = (0, 0, math.radians(rotation_z))
         bpy.ops.object.transform_apply(
             location=False, rotation=True, scale=False)
 
-    # 3. Freeze location
+    # Apply location (freeze origin at 0,0,0)
     bpy.ops.object.transform_apply(
         location=True, rotation=False, scale=False)
 
     bpy.context.view_layer.update()
 
-    # 4. Snap to ground (min_z = 0)
+    # Snap bottom to Z=0
     bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
     min_z = min(v.z for v in bbox_world)
     root.location.z -= min_z
     bpy.context.view_layer.update()
 
-    # 5. Freeze
-    bpy.ops.object.transform_apply(
-        location=True, rotation=False, scale=False)
-
-    # 6. Move to absolute pos
-    root.location = (pos_xz[0], pos_xz[1], 0.0)
+    # Now move so BBOX CENTER (X, Y) is at pos_xz
+    bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
+    min_x = min(v.x for v in bbox_world)
+    max_x = max(v.x for v in bbox_world)
+    min_y = min(v.y for v in bbox_world)
+    max_y = max(v.y for v in bbox_world)
+    cx = (min_x + max_x) / 2.0
+    cy = (min_y + max_y) / 2.0
+    root.location.x += pos_xz[0] - cx
+    root.location.y += pos_xz[1] - cy
     bpy.context.view_layer.update()
 
     return root

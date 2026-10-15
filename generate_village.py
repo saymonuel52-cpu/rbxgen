@@ -1,12 +1,16 @@
 # ============================================================
-# generate_village.py - Village with 4 modular houses
-# Protocol 4.2.0 | Uses fantasy_town + nature_kit
+# generate_village.py - Village with CORRECT house assembly
+# Protocol 4.2.0 | Uses scale_system.build_house
 # ============================================================
 import json
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from core.scale_system import build_house
 
 SCALE = 4.0
 STEP = SCALE
-
 objects = []
 
 
@@ -20,107 +24,61 @@ def add(kit, model, pos, scale=SCALE, rot=0.0, mat="stone"):
 
 def house(cx, cz, size_modules=3, wall_mat="wood_old",
           has_door=True, has_window=True, roof_mat="wood_old"):
-    """Build a small house.
+    """Build house with correct corners/walls (no overlaps)."""
+    objects.extend(build_house(None, cx, cz, size_modules, wall_mat))
     
-    cx, cz = center position (in studs).
-    size_modules = house side length in modules.
-    """
-    half = size_modules / 2.0
-    # Grid positions for walls
-    positions = [(i - (size_modules - 1) / 2.0) * STEP
-                 for i in range(size_modules)]
-
-    # SOUTH wall (rot=0) - Z = cz - half*STEP
-    for idx, dx in enumerate(positions):
-        x = cx + dx
-        z = cz - half * STEP
-        if has_door and idx == size_modules // 2:
-            add("fantasy_town", "wall-doorway-square-wide",
-                [x, z], SCALE, 0, wall_mat)
-        else:
-            add("fantasy_town", "wall", [x, z], SCALE, 0, wall_mat)
-
-    # NORTH wall (rot=180)
-    for idx, dx in enumerate(positions):
-        x = cx + dx
-        z = cz + half * STEP
-        if has_window and idx == size_modules // 2:
-            add("fantasy_town", "wall-window-stone",
-                [x, z], SCALE, 180, wall_mat)
-        else:
-            add("fantasy_town", "wall", [x, z], SCALE, 180, wall_mat)
-
-    # WEST wall (rot=90)
-    for dx in positions[1:-1] if size_modules > 2 else positions:
-        x = cx - half * STEP
-        z = cz + dx
-        add("fantasy_town", "wall", [x, z], SCALE, 90, wall_mat)
-
-    # EAST wall (rot=-90)
-    for dx in positions[1:-1] if size_modules > 2 else positions:
-        x = cx + half * STEP
-        z = cz + dx
-        add("fantasy_town", "wall", [x, z], SCALE, -90, wall_mat)
-
-    # CORNERS
-    corners = [
-        (cx - half * STEP, cz - half * STEP, 0),
-        (cx + half * STEP, cz - half * STEP, -90),
-        (cx + half * STEP, cz + half * STEP, 180),
-        (cx - half * STEP, cz + half * STEP, 90),
-    ]
-    for x, z, rot in corners:
-        add("fantasy_town", "wall-corner", [x, z], SCALE, rot, wall_mat)
-
-    # ROOF - gable pieces
-    for idx, dx in enumerate(positions):
-        x = cx + dx
-        z = cz
-        add("fantasy_town", "roof-gable", [x, z], SCALE, 0, roof_mat)
+    # Add roof on top
+    half = size_modules // 2
+    # Roof tiles
+    for i in range(-half, half + 1):
+        x = cx + i * STEP
+        add("fantasy_town", "roof-gable", [x, cz], SCALE, 0, roof_mat)
     # Roof ends
-    add("fantasy_town", "roof-gable-end",
-        [cx - half * STEP, cz], SCALE, 90, roof_mat)
-    add("fantasy_town", "roof-gable-end",
-        [cx + half * STEP, cz], SCALE, -90, roof_mat)
+    add("fantasy_town", "roof-gable-end", [cx - half * STEP, cz], SCALE, 90, roof_mat)
+    add("fantasy_town", "roof-gable-end", [cx + half * STEP, cz], SCALE, -90, roof_mat)
 
 
-# === 4 HOUSES ===
-house(cx=-20, cz=-20, size_modules=3, wall_mat="wood_old",
-      has_door=True, has_window=True, roof_mat="wood_old")
-
-house(cx=20, cz=-20, size_modules=3, wall_mat="stone",
-      has_door=True, has_window=True, roof_mat="stone")
-
-house(cx=-20, cz=20, size_modules=3, wall_mat="wood_old",
-      has_door=True, has_window=True, roof_mat="wood_old")
-
-house(cx=20, cz=20, size_modules=4, wall_mat="stone",
-      has_door=True, has_window=True, roof_mat="stone")
+# ============================================================
+# 4 HOUSES (with correct assembly)
+# ============================================================
+house(cx=-20, cz=-20, size_modules=3, wall_mat="wood_old")
+house(cx=20, cz=-20, size_modules=3, wall_mat="stone")
+house(cx=-20, cz=20, size_modules=3, wall_mat="wood_old")
+house(cx=20, cz=20, size_modules=4, wall_mat="stone")
 
 
-# === WELL / FOUNTAIN (center) ===
+# ============================================================
+# WELL in center
+# ============================================================
 add("fantasy_town", "fountain-square", [0, 0], SCALE * 1.5, 0, "stone")
 add("fantasy_town", "fountain-center", [0, 0], SCALE * 1.5, 0, "stone")
 
 
-# === FENCE around village (perimeter 80x80) ===
+# ============================================================
+# FENCE around village
+# ============================================================
 half_perim = 40
-# South fence
-for x in range(-half_perim, half_perim + 1, int(STEP)):
-    if abs(x) < 6:  # gate opening
+step_p = int(STEP)
+
+# South fence (with gate opening)
+for x in range(-half_perim, half_perim + 1, step_p):
+    if abs(x) < 6:
         continue
     add("fantasy_town", "fence", [x, -half_perim], SCALE, 0, "wood_old")
+
 # North fence
-for x in range(-half_perim, half_perim + 1, int(STEP)):
+for x in range(-half_perim, half_perim + 1, step_p):
     add("fantasy_town", "fence", [x, half_perim], SCALE, 180, "wood_old")
+
 # West fence
-for z in range(-half_perim + int(STEP), half_perim, int(STEP)):
+for z in range(-half_perim + step_p, half_perim, step_p):
     add("fantasy_town", "fence", [-half_perim, z], SCALE, 90, "wood_old")
+
 # East fence
-for z in range(-half_perim + int(STEP), half_perim, int(STEP)):
+for z in range(-half_perim + step_p, half_perim, step_p):
     add("fantasy_town", "fence", [half_perim, z], SCALE, -90, "wood_old")
 
-# Fence corners
+# Fence corners (reuse fence with rotation)
 for x, z, rot in [(-half_perim, -half_perim, 0),
                   ( half_perim, -half_perim, -90),
                   ( half_perim,  half_perim, 180),
@@ -128,29 +86,36 @@ for x, z, rot in [(-half_perim, -half_perim, 0),
     add("fantasy_town", "fence", [x, z], SCALE, rot, "wood_old")
 
 
-# === ROADS (paths between houses) ===
+# ============================================================
+# ROADS (correct - just flat plates, no rotation)
+# ============================================================
 # Vertical road
-for z in range(-35, 36, int(STEP)):
+for z in range(-36, 37, step_p):
     add("fantasy_town", "road", [0, z], SCALE, 0, "dirt")
 # Horizontal road
-for x in range(-35, 36, int(STEP)):
-    if abs(x) > 2:
-        add("fantasy_town", "road", [x, 0], SCALE, 90, "dirt")
+for x in range(-36, 37, step_p):
+    if abs(x) > 4:
+        add("fantasy_town", "road", [x, 0], SCALE, 0, "dirt")
 
 
-# === LANTERNS at crossroads ===
+# ============================================================
+# LANTERNS at crossroads
+# ============================================================
 for x, z in [(4, 4), (-4, 4), (4, -4), (-4, -4),
              (20, 0), (-20, 0), (0, 20), (0, -20)]:
-    add("fantasy_town", "lantern", [x, z], SCALE * 1.5, 0, "iron")
+    add("fantasy_town", "lantern", [x, z], SCALE, 0, "iron")
 
 
-# === CARTS near houses ===
+# ============================================================
+# CARTS near houses
+# ============================================================
 add("fantasy_town", "cart", [12, -18], SCALE, 0, "wood_old")
 add("fantasy_town", "cart-high", [-12, -18], SCALE, 0, "wood_old")
-add("fantasy_town", "cart", [12, 18], SCALE, 0, "wood_old")
 
 
-# === TREES around village (nature_kit) ===
+# ============================================================
+# TREES (from nature_kit)
+# ============================================================
 tree_positions = [
     (-30, -30, "tree_default"),
     (30, -30, "tree_oak"),
@@ -160,24 +125,21 @@ tree_positions = [
     (28, 0, "tree_default"),
     (0, -30, "tree_oak"),
     (0, 30, "tree_pineSmallA"),
-    (-15, -30, "tree_pineTallB"),
-    (15, 30, "tree_default_dark"),
 ]
 for x, z, model in tree_positions:
     add("nature_kit", model, [x, z], 3.0, 0, "wood_old")
 
 
-# === HEDGES inside village ===
+# ============================================================
+# HEDGES
+# ============================================================
 for x, z in [(-8, -8), (8, -8), (-8, 8), (8, 8)]:
     add("fantasy_town", "hedge", [x, z], SCALE, 0, "leaf")
 
 
-# === BANNERS on houses ===
-add("fantasy_town", "banner-red",
-    [-20, -half_perim if False else -20], SCALE, 0, "fabric")
-
-
-# === SPEC ===
+# ============================================================
+# SPEC
+# ============================================================
 spec = {
     "name": "Village_Test",
     "level": "FULL",
@@ -195,4 +157,3 @@ with open("maps/village.json", "w", encoding="utf-8") as f:
     json.dump(spec, f, indent=2, ensure_ascii=False)
 
 print("Generated village.json with {} objects".format(len(objects)))
-print("Village size: 80 x 80 studs")

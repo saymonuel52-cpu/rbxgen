@@ -1,36 +1,19 @@
-# ============================================================
-# rbxgen — .gitignore
-# ============================================================
-
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-.venv/
 
-# Blender
-*.blend1
-*.blend2
-*.blend3
-
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Project
+# Reports
+reports/*.png
 reports/*.json
-!reports/.gitkeep
+
+# Cache
 assets_cache/
-.env
-!env.example
+
+# Tests
+test_*.py
+diag_*.py
+analyze_*.py
+check_syntax.py
+
+# Temp
+fantasy_*.txt
