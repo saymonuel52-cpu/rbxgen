@@ -1,0 +1,36 @@
+{
+  "name": "Fence_Square",
+  "description": "Квадратный забор 20x20 с калиткой на юге",
+  "level": "BASE",
+  "budget_tris": 5000,
+
+  "ground": {
+    "size": [24, 24],
+    "thickness": 0.5,
+    "material": "dirt"
+  },
+
+  "objects": [
+    { "kit": "fantasy_town", "model": "fence",      "pos": [-8, -10], "rot": 90,  "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [-4, -10], "rot": 90,  "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence-gate", "pos": [ 0, -10], "rot": 90,  "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 4, -10], "rot": 90,  "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 8, -10], "rot": 90,  "mat": "wood_old" },
+
+    { "kit": "fantasy_town", "model": "fence",      "pos": [-8, 10], "rot": 270, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [-4, 10], "rot": 270, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 0, 10], "rot": 270, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 4, 10], "rot": 270, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 8, 10], "rot": 270, "mat": "wood_old" },
+
+    { "kit": "fantasy_town", "model": "fence",      "pos": [-10, -6], "rot": 0, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [-10, -2], "rot": 0, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [-10,  2], "rot": 0, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [-10,  6], "rot": 0, "mat": "wood_old" },
+
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 10, -6], "rot": 180, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 10, -2], "rot": 180, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 10,  2], "rot": 180, "mat": "wood_old" },
+    { "kit": "fantasy_town", "model": "fence",      "pos": [ 10,  6], "rot": 180, "mat": "wood_old" }
+  ]
+}

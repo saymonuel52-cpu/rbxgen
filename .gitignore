@@ -17,3 +17,7 @@ check_syntax.py
 
 # Temp
 fantasy_*.txt
+
+# v2.0
+output/
+reports/

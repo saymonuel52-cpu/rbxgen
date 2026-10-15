@@ -52,8 +52,8 @@ def _setup_render(width=1600, height=1200):
         scene.render.engine = 'BLENDER_WORKBENCH'
         scene.display.shading.light = 'STUDIO'
         scene.display.shading.color_type = 'OBJECT'   # Object color
-        scene.display.shading.show_shadows = True
-        scene.display.shading.show_cavity = True
+        scene.display.shading.show_shadows = False
+        scene.display.shading.show_cavity = False
         scene.display.shading.cavity_type = 'BOTH'
         scene.display.shading.curvature_ridge_factor = 1.5
         scene.display.shading.curvature_valley_factor = 1.0
