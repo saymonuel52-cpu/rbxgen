@@ -1,6 +1,6 @@
 # ============================================================
-# core/importer.py - FINAL FIX (center bbox at pos)
-# Protocol 4.2.0
+# core/importer.py - CLEAN FIX
+# Protocol 4.2.0 | Always apply all transforms
 # ============================================================
 import bpy
 import os
@@ -73,13 +73,14 @@ def list_models(kit_name, format_filter="OBJ"):
 
 def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
                       rotation_z=0.0, prefer_format="OBJ"):
-    """Import model:
-       1. Join new meshes
-       2. Apply scale
-       3. Apply rotation
-       4. Apply all transforms (freeze)
-       5. Snap bottom to ground
-       6. Move so BBOX CENTER is at pos_xz
+    """Import model.
+       Steps:
+       1. Import OBJ, join all meshes into one
+       2. Apply ALL transforms (freeze from OBJ import)
+       3. Apply scale
+       4. Apply rotation Z
+       5. Snap bottom to Z=0
+       6. Move bbox center to pos_xz
     """
     filepath = get_model_path(kit_name, model_name, prefer_format)
     if not filepath:
@@ -99,7 +100,7 @@ def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
         print("[ERROR] No meshes: {}".format(filepath))
         return None
 
-    # Join all
+    # 1. Join all meshes
     bpy.ops.object.select_all(action='DESELECT')
     for o in new_objs:
         o.select_set(True)
@@ -109,31 +110,33 @@ def import_into_scene(kit_name, model_name, pos_xz=(0, 0), scale=1.0,
     root = bpy.context.view_layer.objects.active
     root.name = model_name
 
-    # Apply scale
+    # 2. FREEZE all transforms from OBJ import (crucial!)
+    bpy.ops.object.transform_apply(
+        location=True, rotation=True, scale=True)
+
+    bpy.context.view_layer.update()
+
+    # 3. Apply scale (always)
     if scale != 1.0:
         root.scale = (scale, scale, scale)
         bpy.ops.object.transform_apply(
             location=False, rotation=False, scale=True)
 
-    # Apply rotation (around Z)
+    # 4. Apply rotation Z (always)
     if rotation_z != 0.0:
         root.rotation_euler = (0, 0, math.radians(rotation_z))
         bpy.ops.object.transform_apply(
             location=False, rotation=True, scale=False)
 
-    # Apply location (freeze origin at 0,0,0)
-    bpy.ops.object.transform_apply(
-        location=True, rotation=False, scale=False)
-
     bpy.context.view_layer.update()
 
-    # Snap bottom to Z=0
+    # 5. Snap bottom to Z=0
     bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
     min_z = min(v.z for v in bbox_world)
     root.location.z -= min_z
     bpy.context.view_layer.update()
 
-    # Now move so BBOX CENTER (X, Y) is at pos_xz
+    # 6. Move bbox center to pos_xz
     bbox_world = [root.matrix_world @ Vector(c) for c in root.bound_box]
     min_x = min(v.x for v in bbox_world)
     max_x = max(v.x for v in bbox_world)
